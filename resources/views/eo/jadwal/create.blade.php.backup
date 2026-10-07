@@ -1,0 +1,752 @@
+<x-layouts.eo :user="$user" title="Tambah Jadwal">
+
+    <style>
+        .form-page {
+            padding: 28px;
+        }
+
+        .form-hero {
+            background: linear-gradient(135deg, #166534, #15803d);
+            color: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(22, 101, 52, .18);
+        }
+
+        .form-hero h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+        }
+
+        .form-hero p {
+            margin: 0;
+            max-width: 700px;
+            line-height: 1.6;
+            opacity: .9;
+        }
+
+        .form-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 22px;
+        }
+
+        .form-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            padding: 26px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, .04);
+        }
+
+        .form-card h2 {
+            margin: 0 0 5px;
+            font-size: 19px;
+            color: #111827;
+        }
+
+        .form-card-description {
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #166534;
+            margin: 25px 0 15px;
+            padding-bottom: 9px;
+            border-bottom: 1px solid #dcfce7;
+        }
+
+        .section-title:first-child {
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 17px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 7px;
+        }
+
+        .required {
+            color: #dc2626;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            background: white;
+            color: #1f2937;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: .2s;
+        }
+
+        .form-control:focus {
+            border-color: #16a34a;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, .10);
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .side-card {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 22px;
+            height: fit-content;
+        }
+
+        .side-card h3 {
+            margin: 0 0 12px;
+            color: #111827;
+            font-size: 16px;
+        }
+
+        .side-card p {
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.7;
+            margin: 0 0 18px;
+        }
+
+        .info-item {
+            display: flex;
+            gap: 11px;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 9px;
+            background: #dcfce7;
+            color: #166534;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .info-item strong {
+            display: block;
+            color: #374151;
+            font-size: 13px;
+            margin-bottom: 3px;
+        }
+
+        .info-item span {
+            color: #6b7280;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 9px;
+            padding: 11px 17px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-back {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-save {
+            background: #166534;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #15803d;
+        }
+
+        .error-box {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            padding: 14px 17px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .error-box ul {
+            margin: 7px 0 0 18px;
+            padding: 0;
+        }
+
+        .empty-event {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            color: #9a3412;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 13px;
+        }
+
+        .tip-box {
+            margin-top: 18px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            padding: 13px;
+            color: #166534;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 900px) {
+            .form-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .form-page {
+                padding: 18px;
+            }
+
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+
+            .form-hero h1 {
+                font-size: 23px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .actions .btn {
+                text-align: center;
+            }
+        }
+    </style>
+
+
+    <div class="form-page">
+
+        {{-- HEADER --}}
+
+        <div class="form-hero">
+
+            <h1>
+                Tambah Jadwal
+            </h1>
+
+            <p>
+                Atur jadwal pelaksanaan event dengan menentukan
+                waktu, lokasi, penanggung jawab, dan informasi
+                kegiatan secara terstruktur.
+            </p>
+
+        </div>
+
+
+        {{-- VALIDATION ERROR --}}
+
+        @if($errors->any())
+
+            <div class="error-box">
+
+                <strong>
+                    Data belum dapat disimpan.
+                </strong>
+
+                <ul>
+
+                    @foreach($errors->all() as $error)
+
+                        <li>
+                            {{ $error }}
+                        </li>
+
+                    @endforeach
+
+                </ul>
+
+            </div>
+
+        @endif
+
+
+        <form
+            action="{{ route('eo.jadwal.store') }}"
+            method="POST">
+
+            @csrf
+
+
+            <div class="form-layout">
+
+
+                {{-- FORM UTAMA --}}
+
+                <div class="form-card">
+
+                    <h2>
+                        Informasi Jadwal
+                    </h2>
+
+                    <p class="form-card-description">
+                        Lengkapi informasi jadwal event berikut.
+                    </p>
+
+
+                    {{-- EVENT --}}
+
+                    <div class="section-title">
+                        EVENT
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="event_id">
+
+                            Pilih Event
+                            <span class="required">*</span>
+
+                        </label>
+
+
+                        @if($events->count() > 0)
+
+                            <select
+                                name="event_id"
+                                id="event_id"
+                                class="form-control"
+                                required>
+
+                                <option value="">
+                                    -- Pilih Event --
+                                </option>
+
+
+                                @foreach($events as $event)
+
+                                    <option
+                                        value="{{ $event->id }}"
+                                        {{ old('event_id') == $event->id ? 'selected' : '' }}>
+
+                                        {{ $event->nama_event }}
+
+                                    </option>
+
+                                @endforeach
+
+                            </select>
+
+                        @else
+
+                            <div class="empty-event">
+
+                                Belum ada event yang tersedia.
+                                Silakan buat event terlebih dahulu
+                                melalui menu Kelola Event.
+
+                            </div>
+
+                        @endif
+
+                    </div>
+
+
+                    {{-- DETAIL JADWAL --}}
+
+                    <div class="section-title">
+                        DETAIL JADWAL
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="nama_jadwal">
+
+                            Nama Jadwal
+                            <span class="required">*</span>
+
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nama_jadwal"
+                            name="nama_jadwal"
+                            class="form-control"
+                            value="{{ old('nama_jadwal') }}"
+                            placeholder="Contoh: Persiapan Pembukaan"
+                            required>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="keterangan">
+                            Keterangan
+                        </label>
+
+                        <textarea
+                            id="keterangan"
+                            name="keterangan"
+                            class="form-control"
+                            placeholder="Tuliskan informasi tambahan mengenai jadwal...">{{ old('keterangan') }}</textarea>
+
+                    </div>
+
+
+                    {{-- WAKTU --}}
+
+                    <div class="section-title">
+                        WAKTU PELAKSANAAN
+                    </div>
+
+
+                    <div class="two-column">
+
+                        <div class="form-group">
+
+                            <label for="tanggal">
+
+                                Tanggal
+                                <span class="required">*</span>
+
+                            </label>
+
+                            <input
+                                type="date"
+                                id="tanggal"
+                                name="tanggal"
+                                class="form-control"
+                                value="{{ old('tanggal') }}"
+                                required>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="status">
+
+                                Status
+                                <span class="required">*</span>
+
+                            </label>
+
+
+                            <select
+                                id="status"
+                                name="status"
+                                class="form-control"
+                                required>
+
+                                <option
+                                    value="terjadwal"
+                                    {{ old('status', 'terjadwal') == 'terjadwal' ? 'selected' : '' }}>
+
+                                    Terjadwal
+
+                                </option>
+
+
+                                <option
+                                    value="berlangsung"
+                                    {{ old('status') == 'berlangsung' ? 'selected' : '' }}>
+
+                                    Berlangsung
+
+                                </option>
+
+
+                                <option
+                                    value="selesai"
+                                    {{ old('status') == 'selesai' ? 'selected' : '' }}>
+
+                                    Selesai
+
+                                </option>
+
+
+                                <option
+                                    value="batal"
+                                    {{ old('status') == 'batal' ? 'selected' : '' }}>
+
+                                    Batal
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="two-column">
+
+                        <div class="form-group">
+
+                            <label for="waktu_mulai">
+
+                                Waktu Mulai
+                                <span class="required">*</span>
+
+                            </label>
+
+                            <input
+                                type="time"
+                                id="waktu_mulai"
+                                name="waktu_mulai"
+                                class="form-control"
+                                value="{{ old('waktu_mulai') }}"
+                                required>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="waktu_selesai">
+                                Waktu Selesai
+                            </label>
+
+                            <input
+                                type="time"
+                                id="waktu_selesai"
+                                name="waktu_selesai"
+                                class="form-control"
+                                value="{{ old('waktu_selesai') }}">
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- LOKASI DAN PIC --}}
+
+                    <div class="section-title">
+                        LOKASI & PENANGGUNG JAWAB
+                    </div>
+
+
+                    <div class="two-column">
+
+                        <div class="form-group">
+
+                            <label for="lokasi">
+                                Lokasi
+                            </label>
+
+                            <input
+                                type="text"
+                                id="lokasi"
+                                name="lokasi"
+                                class="form-control"
+                                value="{{ old('lokasi') }}"
+                                placeholder="Contoh: Aula Utama">
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="penanggung_jawab">
+                                Penanggung Jawab
+                            </label>
+
+                            <input
+                                type="text"
+                                id="penanggung_jawab"
+                                name="penanggung_jawab"
+                                class="form-control"
+                                value="{{ old('penanggung_jawab') }}"
+                                placeholder="Nama PIC">
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- ACTION --}}
+
+                    <div class="actions">
+
+                        <a
+                            href="{{ route('eo.jadwal.index') }}"
+                            class="btn btn-back">
+
+                            â† Kembali
+
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-save">
+
+                            âœ“ Simpan Jadwal
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                {{-- PANEL INFORMASI --}}
+
+                <aside class="side-card">
+
+                    <h3>
+                        Panduan Jadwal
+                    </h3>
+
+                    <p>
+                        Jadwal digunakan untuk membantu Divisi Acara
+                        mengatur waktu pelaksanaan kegiatan event
+                        secara terstruktur.
+                    </p>
+
+
+                    <div class="info-item">
+
+                        <div class="info-icon">
+                            1
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Pilih Event
+                            </strong>
+
+                            <span>
+                                Tentukan event yang memiliki jadwal.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <div class="info-icon">
+                            2
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Tentukan Waktu
+                            </strong>
+
+                            <span>
+                                Masukkan tanggal dan jam pelaksanaan.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <div class="info-icon">
+                            3
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Tentukan Lokasi
+                            </strong>
+
+                            <span>
+                                Masukkan lokasi pelaksanaan jadwal.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <div class="info-icon">
+                            4
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Simpan Jadwal
+                            </strong>
+
+                            <span>
+                                Jadwal akan muncul pada daftar jadwal.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="tip-box">
+
+                        <strong>Tips:</strong>
+                        gunakan nama jadwal yang singkat dan jelas
+                        agar mudah dibaca oleh seluruh panitia.
+
+                    </div>
+
+                </aside>
+
+
+            </div>
+
+        </form>
+
+    </div>
+
+</x-layouts.eo>

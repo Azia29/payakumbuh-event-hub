@@ -1,0 +1,856 @@
+<x-layouts.eo :user="$user" title="Dashboard Acara">
+
+<style>
+
+.acara-page {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+/* HERO */
+
+.acara-hero {
+    position: relative;
+    overflow: hidden;
+    min-height: 245px;
+    padding: 34px;
+    margin-bottom: 24px;
+    border-radius: 24px;
+
+    background:
+        radial-gradient(circle at 88% 18%, rgba(134,239,172,.28), transparent 27%),
+        radial-gradient(circle at 72% 100%, rgba(34,197,94,.22), transparent 35%),
+        linear-gradient(135deg, #052e16, #166534 55%, #15803d);
+
+    color: white;
+}
+
+.acara-hero::before {
+    content: "";
+    position: absolute;
+    width: 310px;
+    height: 310px;
+    right: -100px;
+    top: -150px;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 50%;
+}
+
+.acara-hero::after {
+    content: "";
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    right: 70px;
+    bottom: -155px;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 50%;
+}
+
+.acara-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 720px;
+}
+
+.acara-eyebrow {
+    display: inline-flex;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.16);
+    font-size: 11px;
+    margin-bottom: 16px;
+}
+
+.acara-hero h2 {
+    margin: 0;
+    font-size: 31px;
+    line-height: 1.2;
+}
+
+.acara-hero p {
+    margin: 12px 0 22px;
+    max-width: 620px;
+    color: #dcfce7;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.acara-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.acara-btn-white {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 11px 16px;
+    border-radius: 10px;
+    background: white;
+    color: #166534;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.acara-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 11px 16px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.25);
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+/* STAT */
+
+.acara-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.acara-stat {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(15,23,42,.045);
+}
+
+.acara-stat-icon {
+    width: 43px;
+    height: 43px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0fdf4;
+    font-size: 19px;
+}
+
+.acara-stat-label {
+    margin-top: 16px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.acara-stat-number {
+    margin-top: 4px;
+    color: #172033;
+    font-size: 27px;
+    font-weight: 800;
+}
+
+/* MAIN */
+
+.acara-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(310px, .85fr);
+    gap: 20px;
+}
+
+.acara-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(15,23,42,.045);
+}
+
+.acara-card-header {
+    padding: 20px 22px;
+    border-bottom: 1px solid #eef2f7;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.acara-card-title {
+    margin: 0;
+    color: #172033;
+    font-size: 17px;
+    font-weight: 750;
+}
+
+.acara-card-desc {
+    margin: 5px 0 0;
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.acara-card-body {
+    padding: 20px 22px;
+}
+
+/* EVENT AKTIF */
+
+.acara-event {
+    padding: 18px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #f0fdf4, #ffffff);
+    border: 1px solid #dcfce7;
+    margin-bottom: 18px;
+}
+
+.acara-event-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.acara-event-title {
+    font-size: 16px;
+    font-weight: 750;
+    color: #172033;
+}
+
+.acara-status {
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 10px;
+    font-weight: 700;
+    height: fit-content;
+}
+
+.acara-event-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 11px;
+    color: #64748b;
+    font-size: 11px;
+}
+
+.acara-event-description {
+    margin-top: 12px;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* TIMELINE */
+
+.acara-timeline {
+    position: relative;
+}
+
+.acara-timeline-item {
+    display: grid;
+    grid-template-columns: 75px 22px minmax(0, 1fr);
+    gap: 10px;
+    min-height: 65px;
+}
+
+.acara-time {
+    padding-top: 2px;
+    text-align: right;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.acara-dot-wrap {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.acara-dot-wrap::after {
+    content: "";
+    position: absolute;
+    top: 19px;
+    bottom: -10px;
+    width: 1px;
+    background: #dcfce7;
+}
+
+.acara-timeline-item:last-child .acara-dot-wrap::after {
+    display: none;
+}
+
+.acara-dot {
+    width: 10px;
+    height: 10px;
+    margin-top: 4px;
+    border-radius: 50%;
+    background: #16a34a;
+    position: relative;
+    z-index: 2;
+}
+
+.acara-timeline-content {
+    padding-bottom: 18px;
+}
+
+.acara-timeline-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+}
+
+.acara-timeline-meta {
+    margin-top: 4px;
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+/* QUICK MENU */
+
+.acara-menu {
+    display: grid;
+    gap: 11px;
+}
+
+.acara-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 13px;
+    text-decoration: none;
+    color: #334155;
+    transition: .2s;
+}
+
+.acara-menu-item:hover {
+    background: #f0fdf4;
+    border-color: #86efac;
+    transform: translateY(-1px);
+}
+
+.acara-menu-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #f0fdf4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.acara-menu-title {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.acara-menu-text {
+    margin-top: 3px;
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+/* PROGRESS */
+
+.acara-progress {
+    margin-top: 20px;
+    padding: 18px;
+    border-radius: 15px;
+    background: #f8fafc;
+}
+
+.acara-progress-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 700;
+    color: #334155;
+}
+
+.acara-progress-bar {
+    height: 8px;
+    margin-top: 10px;
+    border-radius: 999px;
+    background: #e5e7eb;
+    overflow: hidden;
+}
+
+.acara-progress-value {
+    height: 100%;
+    width: 65%;
+    background: linear-gradient(90deg, #16a34a, #4ade80);
+    border-radius: 999px;
+}
+
+/* INFO */
+
+.acara-info {
+    margin-top: 20px;
+    padding: 19px 22px;
+    border-radius: 18px;
+    border: 1px solid #bbf7d0;
+    background: linear-gradient(135deg, #f0fdf4, white);
+}
+
+.acara-info-title {
+    color: #166534;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.acara-info-text {
+    margin: 7px 0 0;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1050px) {
+
+    .acara-stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .acara-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media(max-width:600px) {
+
+    .acara-stat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .acara-hero {
+        padding: 24px;
+    }
+
+    .acara-hero h2 {
+        font-size: 25px;
+    }
+
+    .acara-timeline-item {
+        grid-template-columns: 58px 20px minmax(0, 1fr);
+    }
+
+}
+
+</style>
+
+
+<div class="acara-page">
+
+
+    {{-- HERO --}}
+
+    <section class="acara-hero">
+
+        <div class="acara-hero-content">
+
+            <div class="acara-eyebrow">
+                �-� DIVISI ACARA
+            </div>
+
+            <h2>
+                Pusat Kendali<br>
+                Pelaksanaan Event
+            </h2>
+
+            <p>
+                Atur rangkaian kegiatan, susun rundown,
+                kelola jadwal, dan pastikan setiap bagian
+                acara berjalan sesuai rencana.
+            </p>
+
+            <div class="acara-actions">
+
+                <a
+                    href="{{ route('eo.rundown.create') }}"
+                    class="acara-btn-white"
+                >
+                    �< Buat Rundown
+                </a>
+
+                <a
+                    href="{{ route('eo.jadwal.create') }}"
+                    class="acara-btn-outline"
+                >
+                    �< Tambah Jadwal
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    {{-- STATISTIK --}}
+
+    <section class="acara-stat-grid">
+
+
+        <div class="acara-stat">
+
+            <div class="acara-stat-icon">
+                �Y".
+            </div>
+
+            <div class="acara-stat-label">
+                Total Event
+            </div>
+
+            <div class="acara-stat-number">
+                {{ $totalEvent ?? 0 }}
+            </div>
+
+        </div>
+
+
+        <div class="acara-stat">
+
+            <div class="acara-stat-icon">
+                �s�
+            </div>
+
+            <div class="acara-stat-label">
+                Event Aktif
+            </div>
+
+            <div class="acara-stat-number">
+                {{ $eventAktif ?? 0 }}
+            </div>
+
+        </div>
+
+
+        <div class="acara-stat">
+
+            <div class="acara-stat-icon">
+                �Y"�
+            </div>
+
+            <div class="acara-stat-label">
+                Rundown
+            </div>
+
+            <div class="acara-stat-number">
+                {{ $totalRundown ?? 0 }}
+            </div>
+
+        </div>
+
+
+        <div class="acara-stat">
+
+            <div class="acara-stat-icon">
+                �Y"O
+            </div>
+
+            <div class="acara-stat-label">
+                Kegiatan
+            </div>
+
+            <div class="acara-stat-number">
+                {{ $totalKegiatan ?? 0 }}
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+    {{-- KONTEN UTAMA --}}
+
+    <section class="acara-grid">
+
+
+        {{-- RUNDOWN / JADWAL --}}
+
+        <div class="acara-card">
+
+            <div class="acara-card-header">
+
+                <div>
+
+                    <h3 class="acara-card-title">
+                        Timeline Kegiatan
+                    </h3>
+
+                    <p class="acara-card-desc">
+                        Jadwal kegiatan yang sedang dipersiapkan.
+                    </p>
+
+                </div>
+
+                <a
+                    href="{{ route('eo.rundown.index') }}"
+                    style="
+                        text-decoration:none;
+                        color:#16a34a;
+                        font-size:12px;
+                        font-weight:700;
+                    "
+                >
+                    Lihat Semua �?'
+                </a>
+
+            </div>
+
+
+            <div class="acara-card-body">
+
+                @if(isset($rundowns) && $rundowns->count())
+
+                    <div class="acara-timeline">
+
+                        @foreach($rundowns as $rundown)
+
+                            <div class="acara-timeline-item">
+
+                                <div class="acara-time">
+
+                                    {{ $rundown->waktu_mulai
+                                        ? \Carbon\Carbon::parse($rundown->waktu_mulai)->format('H:i')
+                                        : '--:--'
+                                    }}
+
+                                </div>
+
+
+                                <div class="acara-dot-wrap">
+
+                                    <div class="acara-dot"></div>
+
+                                </div>
+
+
+                                <div class="acara-timeline-content">
+
+                                    <div class="acara-timeline-title">
+
+                                        {{ $rundown->nama_kegiatan
+                                            ?? $rundown->kegiatan
+                                            ?? 'Kegiatan Event'
+                                        }}
+
+                                    </div>
+
+                                    <div class="acara-timeline-meta">
+
+                                        {{ $rundown->event?->nama_event ?? 'Event' }}
+
+                                        @if($rundown->tanggal)
+                                            �?� {{ \Carbon\Carbon::parse($rundown->tanggal)->format('d M Y') }}
+                                        @endif
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        @endforeach
+
+                    </div>
+
+                @else
+
+                    <div style="
+                        text-align:center;
+                        padding:35px 10px;
+                        color:#94a3b8;
+                    ">
+
+                        <div style="font-size:35px;">
+                            �Y-"️
+                        </div>
+
+                        <div style="
+                            margin-top:8px;
+                            font-size:13px;
+                            font-weight:700;
+                        ">
+                            Belum ada rundown
+                        </div>
+
+                        <div style="
+                            margin-top:5px;
+                            font-size:11px;
+                        ">
+                            Buat rundown untuk mengatur alur acara.
+                        </div>
+
+                    </div>
+
+                @endif
+
+            </div>
+
+        </div>
+
+
+        {{-- MENU ACARA --}}
+
+        <div class="acara-card">
+
+            <div class="acara-card-header">
+
+                <div>
+
+                    <h3 class="acara-card-title">
+                        Pusat Pengelolaan
+                    </h3>
+
+                    <p class="acara-card-desc">
+                        Fitur utama Divisi Acara.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="acara-card-body">
+
+                <div class="acara-menu">
+
+
+                    <a
+                        href="{{ route('eo.rundown.index') }}"
+                        class="acara-menu-item"
+                    >
+
+                        <div class="acara-menu-icon">
+                            �Y"�
+                        </div>
+
+                        <div>
+
+                            <div class="acara-menu-title">
+                                Rundown Acara
+                            </div>
+
+                            <div class="acara-menu-text">
+                                Susun urutan kegiatan event
+                            </div>
+
+                        </div>
+
+                    </a>
+
+
+                    <a
+                        href="{{ route('eo.jadwal.index') }}"
+                        class="acara-menu-item"
+                    >
+
+                        <div class="acara-menu-icon">
+                            �Y-"️
+                        </div>
+
+                        <div>
+
+                            <div class="acara-menu-title">
+                                Jadwal Event
+                            </div>
+
+                            <div class="acara-menu-text">
+                                Atur tanggal dan waktu kegiatan
+                            </div>
+
+                        </div>
+
+                    </a>
+
+
+                    <a
+                        href="{{ route('eo.kegiatan.index') }}"
+                        class="acara-menu-item"
+                    >
+
+                        <div class="acara-menu-icon">
+                            �Y"O
+                        </div>
+
+                        <div>
+
+                            <div class="acara-menu-title">
+                                Daftar Kegiatan
+                            </div>
+
+                            <div class="acara-menu-text">
+                                Kelola kegiatan dalam event
+                            </div>
+
+                        </div>
+
+                    </a>
+
+
+                </div>
+
+
+                {{-- PROGRESS --}}
+
+                <div class="acara-progress">
+
+                    <div class="acara-progress-head">
+
+                        <span>
+                            Persiapan Pelaksanaan
+                        </span>
+
+                        <span>
+                            65%
+                        </span>
+
+                    </div>
+
+                    <div class="acara-progress-bar">
+
+                        <div class="acara-progress-value"></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+    {{-- INFORMASI --}}
+
+    <section class="acara-info">
+
+        <div class="acara-info-title">
+            �o� Tanggung Jawab Divisi Acara
+        </div>
+
+        <p class="acara-info-text">
+            Divisi Acara bertanggung jawab terhadap teknis
+            pelaksanaan kegiatan event, mulai dari menyusun
+            rundown, menentukan jadwal, mengatur rangkaian
+            kegiatan, sampai memastikan pelaksanaan acara
+            berjalan sesuai rencana.
+        </p>
+
+    </section>
+
+
+</div>
+
+</x-layouts.eo>
