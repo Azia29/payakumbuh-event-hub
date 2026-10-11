@@ -436,13 +436,13 @@
         <div class="sidebar-menu">
 
             <a href="{{ route('eo.panitia.index') }}"
-               class="{{ $isActive('eo.panitia.index') ? 'active' : '' }}">
+               class="{{ ($isActive('eo.panitia') && ! $isActive('eo.panitia.tugas')) ? 'active' : '' }}">
                 <span class="menu-icon">PN</span>
                 <span>Kelola Panitia</span>
             </a>
 
             <a href="{{ route('eo.panitia.tugas.index') }}"
-               class="{{ $isActive('eo.panitia') ? 'active' : '' }}">
+               class="{{ $isActive('eo.panitia.tugas') ? 'active' : '' }}">
                 <span class="menu-icon">PT</span>
                 <span>Pembagian Tugas</span>
             </a>
@@ -565,7 +565,7 @@
             <div class="header-right">
 
                 <div class="header-date">
-                    {{ now()->translatedFormat('l, d F Y') }}
+                    {{ now()->locale('id')->translatedFormat('l, d F Y') }}
                 </div>
 
                 <div class="header-role">

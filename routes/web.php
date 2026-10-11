@@ -153,6 +153,8 @@ Route::middleware(['auth', EoMiddleware::class])
         Route::patch('/events/{event}/ajukan', [EventController::class, 'ajukan'])->name('events.ajukan');
         Route::patch('/events/{event}/batalkan', [EventController::class, 'batalkanPengajuan'])->name('events.batalkan');
 
+        Route::post('/panitia/{panitia}/qr/buat-ulang', [PanitiaController::class, 'buatUlangQr'])->name('panitia.qr.buat-ulang');
+
 
         /*
         |--------------------------------------------------------------------------
@@ -627,7 +629,7 @@ Route::get(
 Route::get(
     '/panitia/qr/{token}',
     [TugasPanitiaController::class, 'publicPanitiaByToken']
-)->name('panitia.qr');
+)->middleware('throttle:30,1')->name('panitia.qr');
 
 
 /*
@@ -664,7 +666,7 @@ Route::get(
 Route::get(
     '/panitia/qr/{token}',
     [TugasPanitiaController::class, 'publicPanitiaByToken']
-)->name('panitia.qr');
+)->middleware('throttle:30,1')->name('panitia.qr');
 
 
 /*

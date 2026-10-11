@@ -109,4 +109,16 @@ class PanitiaController extends Controller
             'panitia'
         ));
     }
-}
+
+    /**
+     * Buat ulang token QR panitia.
+     * Token lama langsung tidak berlaku.
+     */
+    public function buatUlangQr(\App\Models\Panitia $panitia)
+    {
+        $panitia->update([
+            'qr_token' => \Illuminate\Support\Str::random(64),
+        ]);
+
+        return back()->with('success', 'QR berhasil dibuat ulang. QR lama sudah tidak berlaku, cetak atau bagikan QR yang baru.');
+    }}
