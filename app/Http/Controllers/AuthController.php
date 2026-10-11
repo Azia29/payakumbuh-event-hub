@@ -19,26 +19,55 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-
-            $user = Auth::user();
-
-            // Pastikan akun adalah EO
-            if (strtoupper($user->role) === 'EO') {
-                return redirect()->route('eo.dashboard');
-            }
-
-            Auth::logout();
-
-            return back()->withErrors([
-                'email' => 'Akun ini bukan akun EO.',
-            ])->onlyInput('email');
+        if (!Auth::attempt($credentials)) {
+            return back()
+                ->withErrors([
+                    'email' => 'Email atau password salah.',
+                ])
+                ->onlyInput('email');
         }
 
-        return back()->withErrors([
-            'email' => 'Email atau password salah.',
-        ])->onlyInput('email');
+        $request->session()->regenerate();
+
+        $user = Auth::user();
+
+        $role = strtoupper((string) $user->role);
+
+        // =========================
+        // LOGIN EO
+        // =========================
+        if ($role === 'EO') {
+            return redirect()->route('eo.dashboard');
+        }
+
+        // =========================
+        // LOGIN PANITIA
+        // =========================
+        if ($role === 'PANITIA') {
+
+            if (!$user->panitia_id) {
+                Auth::logout();
+
+                return back()
+                    ->withErrors([
+                        'email' => 'Akun panitia belum terhubung dengan data panitia.',
+                    ])
+                    ->onlyInput('email');
+            }
+
+            return redirect()->route('panitia.dashboard');
+        }
+
+        // =========================
+        // ROLE TIDAK DIKENAL
+        // =========================
+        Auth::logout();
+
+        return back()
+            ->withErrors([
+                'email' => 'Role akun tidak dikenali.',
+            ])
+            ->onlyInput('email');
     }
 
     public function logout(Request $request)

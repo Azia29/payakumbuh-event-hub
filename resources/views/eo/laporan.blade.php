@@ -777,7 +777,7 @@
 
                                     <td>
                                         @if($event->tgl_mulai)
-                                            {{ \Carbon\Carbon::parse($event->tgl_mulai)->format('d M Y') }}
+                                            {{ \Carbon\Carbon::parse($event->tgl_mulai)->locale('id')->translatedFormat('d M Y') }}
                                         @else
                                             -
                                         @endif
@@ -785,7 +785,7 @@
 
                                     <td>
                                         @if($event->tgl_selesai)
-                                            {{ \Carbon\Carbon::parse($event->tgl_selesai)->format('d M Y') }}
+                                            {{ \Carbon\Carbon::parse($event->tgl_selesai)->locale('id')->translatedFormat('d M Y') }}
                                         @else
                                             -
                                         @endif

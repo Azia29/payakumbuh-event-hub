@@ -468,8 +468,8 @@
                 <span>Pengajuan Sponsor</span>
             </a>
 
-            <a href="{{ route('eo.sponsorship.pengajuan.index') }}"
-               class="{{ $isActive('eo.sponsorship.pengajuan') ? 'active' : '' }}">
+            <a href="{{ route('eo.sponsorship.negosiasi.all') }}"
+               class="{{ $isActive('eo.sponsorship.negosiasi') ? 'active' : '' }}">
                 <span class="menu-icon">NG</span>
                 <span>Negosiasi</span>
             </a>
@@ -495,8 +495,8 @@
                 <span>Kelola Dokumentasi</span>
             </a>
 
-            <a href="{{ route('eo.dokumentasi.index') }}"
-               class="{{ $isActive('eo.dokumentasi') ? 'active' : '' }}">
+            <a href="{{ route('eo.galeri.index') }}"
+               class="{{ $isActive('eo.galeri') ? 'active' : '' }}">
                 <span class="menu-icon">GL</span>
                 <span>Galeri Event</span>
             </a>

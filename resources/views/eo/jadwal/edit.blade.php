@@ -1,306 +1,486 @@
-```blade
-<x-layouts.eo :user="$user" title="Edit Jadwal">
+﻿<x-layouts.eo :user="$user" title="Edit Jadwal">
 
-    <div class="mx-auto max-w-4xl space-y-6">
+<style>
+    .jadwal-page {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
 
-        {{-- HEADER --}}
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .page-title {
+        margin: 0;
+        font-size: 26px;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .page-description {
+        margin: 7px 0 0;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 16px;
+        border-radius: 9px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+    .btn-back {
+        background: #ffffff;
+        color: #475569;
+        border-color: #dbe2ea;
+    }
+
+    .btn-back:hover {
+        background: #f8fafc;
+    }
+
+    .btn-save {
+        background: #0f766e;
+        color: #ffffff;
+    }
+
+    .btn-save:hover {
+        background: #115e59;
+    }
+
+    .form-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, .05);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        padding: 22px 24px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .form-card-title {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .form-card-subtitle {
+        margin: 6px 0 0;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .form-body {
+        padding: 26px 24px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-label {
+        margin-bottom: 7px;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .required {
+        color: #dc2626;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 44px;
+        padding: 10px 12px;
+        border: 1px solid #dbe2ea;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #1f2937;
+        font-size: 14px;
+        outline: none;
+        transition: border-color .2s, box-shadow .2s;
+    }
+
+    .form-control:focus {
+        border-color: #0f766e;
+        box-shadow: 0 0 0 3px rgba(15, 118, 110, .10);
+    }
+
+    textarea.form-control {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+    select.form-control {
+        cursor: pointer;
+    }
+
+    .form-help {
+        margin-top: 5px;
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .error-message {
+        margin-top: 5px;
+        color: #dc2626;
+        font-size: 12px;
+    }
+
+    .alert {
+        margin-bottom: 20px;
+        padding: 13px 16px;
+        border-radius: 9px;
+        font-size: 14px;
+    }
+
+    .alert-error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+    }
+
+    .form-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 18px 24px;
+        background: #f8fafc;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+        }
+
+        .page-header .btn {
+            width: 100%;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full {
+            grid-column: auto;
+        }
+
+        .form-footer {
+            flex-direction: column-reverse;
+        }
+
+        .form-footer .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="jadwal-page">
+
+    <div class="page-header">
         <div>
-            <div class="mb-2">
-                <a
-                    href="{{ route('eo.jadwal.index') }}"
-                    class="text-sm font-medium text-green-600 hover:text-green-700"
-                >
-                    â† Kembali ke Jadwal
-                </a>
-            </div>
+            <h1 class="page-title">Edit Jadwal</h1>
 
-            <h1 class="text-2xl font-bold text-gray-800">
-                Edit Jadwal
-            </h1>
-
-            <p class="mt-1 text-sm text-gray-500">
-                Perbarui informasi jadwal event.
+            <p class="page-description">
+                Perbarui informasi jadwal kegiatan event sesuai kebutuhan.
             </p>
         </div>
 
-        {{-- ERROR VALIDASI --}}
-        @if ($errors->any())
-            <div class="rounded-lg border border-red-200 bg-red-50 p-4">
+        <a href="{{ route('eo.jadwal.index') }}" class="btn btn-back">
+            Kembali ke Jadwal
+        </a>
+    </div>
 
-                <p class="mb-2 font-semibold text-red-700">
-                    Terdapat kesalahan:
-                </p>
+    @if ($errors->any())
+        <div class="alert alert-error">
+            <strong>Periksa kembali data yang dimasukkan.</strong>
 
-                <ul class="list-disc space-y-1 pl-5 text-sm text-red-600">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+            <ul style="margin:8px 0 0 18px;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-            </div>
-        @endif
+    <form
+        action="{{ route('eo.jadwal.update', $jadwal) }}"
+        method="POST"
+        class="form-card"
+    >
 
-        {{-- FORM --}}
-        <div class="rounded-xl border border-gray-200 bg-white">
+        @csrf
+        @method('PUT')
 
-            <div class="border-b border-gray-200 px-6 py-4">
-                <h2 class="font-semibold text-gray-800">
-                    Informasi Jadwal
-                </h2>
+        <div class="form-card-header">
+            <h2 class="form-card-title">Informasi Jadwal</h2>
 
-                <p class="mt-1 text-sm text-gray-500">
-                    Perbarui data sesuai kebutuhan.
-                </p>
-            </div>
+            <p class="form-card-subtitle">
+                Perbarui data kegiatan, waktu, lokasi, dan penanggung jawab.
+            </p>
+        </div>
 
-            <form
-                action="{{ route('eo.jadwal.update', $jadwal) }}"
-                method="POST"
-                class="space-y-6 p-6"
-            >
+        <div class="form-body">
 
-                @csrf
-                @method('PUT')
+            <div class="form-grid">
 
-                {{-- EVENT --}}
-                <div>
-                    <label
-                        for="event_id"
-                        class="mb-2 block text-sm font-semibold text-gray-700"
-                    >
-                        Event
+                {{-- Event --}}
+                <div class="form-group full">
+                    <label class="form-label" for="event_id">
+                        Event <span class="required">*</span>
                     </label>
 
                     <select
-                        id="event_id"
                         name="event_id"
+                        id="event_id"
+                        class="form-control"
                         required
-                        class="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
                     >
+                        <option value="">Pilih Event</option>
 
-                        <option value="">
-                            -- Pilih Event --
-                        </option>
-
-                        @foreach($events as $event)
-
+                        @foreach ($events as $event)
                             <option
                                 value="{{ $event->id }}"
                                 {{ old('event_id', $jadwal->event_id) == $event->id ? 'selected' : '' }}
                             >
                                 {{ $event->nama_event }}
                             </option>
-
                         @endforeach
-
                     </select>
+
+                    @error('event_id')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
                 </div>
 
-                {{-- NAMA JADWAL --}}
-                <div>
-                    <label
-                        for="nama_jadwal"
-                        class="mb-2 block text-sm font-semibold text-gray-700"
-                    >
-                        Nama Jadwal
+                {{-- Nama Jadwal --}}
+                <div class="form-group full">
+                    <label class="form-label" for="nama_jadwal">
+                        Nama Jadwal <span class="required">*</span>
                     </label>
 
                     <input
                         type="text"
-                        id="nama_jadwal"
                         name="nama_jadwal"
+                        id="nama_jadwal"
+                        class="form-control"
                         value="{{ old('nama_jadwal', $jadwal->nama_jadwal) }}"
+                        placeholder="Contoh: Pembukaan Acara"
                         required
-                        class="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
                     >
+
+                    @error('nama_jadwal')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
                 </div>
 
-                {{-- TANGGAL --}}
-                <div>
-                    <label
-                        for="tanggal"
-                        class="mb-2 block text-sm font-semibold text-gray-700"
-                    >
-                        Tanggal
+                {{-- Tanggal --}}
+                <div class="form-group">
+                    <label class="form-label" for="tanggal">
+                        Tanggal <span class="required">*</span>
                     </label>
 
                     <input
                         type="date"
-                        id="tanggal"
                         name="tanggal"
-                        value="{{ old('tanggal', $jadwal->tanggal) }}"
+                        id="tanggal"
+                        class="form-control"
+                        value="{{ old('tanggal', $jadwal->tanggal ? \Carbon\Carbon::parse($jadwal->tanggal)->format('Y-m-d') : '') }}"
                         required
-                        class="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
                     >
+
+                    @error('tanggal')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
                 </div>
 
-                {{-- WAKTU --}}
-                <div class="grid gap-6 md:grid-cols-2">
+                {{-- Status --}}
+                <div class="form-group">
+                    <label class="form-label" for="status">
+                        Status <span class="required">*</span>
+                    </label>
 
-                    <div>
-                        <label
-                            for="waktu_mulai"
-                            class="mb-2 block text-sm font-semibold text-gray-700"
-                        >
-                            Waktu Mulai
-                        </label>
+                    <select
+                        name="status"
+                        id="status"
+                        class="form-control"
+                        required
+                    >
+                        @php
+                            $currentStatus = old('status', $jadwal->status ?? 'draft');
+                        @endphp
 
-                        <input
-                            type="time"
-                            id="waktu_mulai"
-                            name="waktu_mulai"
-                            value="{{ old('waktu_mulai', $jadwal->waktu_mulai) }}"
-                            required
-                            class="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
-                        >
-                    </div>
+                        <option value="draft" {{ $currentStatus === 'draft' ? 'selected' : '' }}>
+                            Draft
+                        </option>
 
-                    <div>
-                        <label
-                            for="waktu_selesai"
-                            class="mb-2 block text-sm font-semibold text-gray-700"
-                        >
-                            Waktu Selesai
-                        </label>
+                        <option value="terjadwal" {{ $currentStatus === 'terjadwal' ? 'selected' : '' }}>
+                            Terjadwal
+                        </option>
 
-                        <input
-                            type="time"
-                            id="waktu_selesai"
-                            name="waktu_selesai"
-                            value="{{ old('waktu_selesai', $jadwal->waktu_selesai) }}"
-                            class="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
-                        >
-                    </div>
+                        <option value="berlangsung" {{ $currentStatus === 'berlangsung' ? 'selected' : '' }}>
+                            Berlangsung
+                        </option>
 
+                        <option value="selesai" {{ $currentStatus === 'selesai' ? 'selected' : '' }}>
+                            Selesai
+                        </option>
+                    </select>
+
+                    @error('status')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
                 </div>
 
-                {{-- LOKASI --}}
-                <div>
-                    <label
-                        for="lokasi"
-                        class="mb-2 block text-sm font-semibold text-gray-700"
+                {{-- Waktu Mulai --}}
+                <div class="form-group">
+                    <label class="form-label" for="waktu_mulai">
+                        Waktu Mulai <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="time"
+                        name="waktu_mulai"
+                        id="waktu_mulai"
+                        class="form-control"
+                        value="{{ old('waktu_mulai', $jadwal->waktu_mulai ? \Carbon\Carbon::parse($jadwal->waktu_mulai)->format('H:i') : '') }}"
+                        required
                     >
+
+                    @error('waktu_mulai')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                {{-- Waktu Selesai --}}
+                <div class="form-group">
+                    <label class="form-label" for="waktu_selesai">
+                        Waktu Selesai
+                    </label>
+
+                    <input
+                        type="time"
+                        name="waktu_selesai"
+                        id="waktu_selesai"
+                        class="form-control"
+                        value="{{ old('waktu_selesai', $jadwal->waktu_selesai ? \Carbon\Carbon::parse($jadwal->waktu_selesai)->format('H:i') : '') }}"
+                    >
+
+                    @error('waktu_selesai')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                {{-- Lokasi --}}
+                <div class="form-group">
+                    <label class="form-label" for="lokasi">
                         Lokasi
                     </label>
 
                     <input
                         type="text"
-                        id="lokasi"
                         name="lokasi"
+                        id="lokasi"
+                        class="form-control"
                         value="{{ old('lokasi', $jadwal->lokasi) }}"
-                        placeholder="Contoh: Lapangan Utama"
-                        class="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
+                        placeholder="Contoh: Ngalau Indah"
                     >
+
+                    @error('lokasi')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
                 </div>
 
-                {{-- PENANGGUNG JAWAB --}}
-                <div>
-                    <label
-                        for="penanggung_jawab"
-                        class="mb-2 block text-sm font-semibold text-gray-700"
-                    >
+                {{-- Penanggung Jawab --}}
+                <div class="form-group">
+                    <label class="form-label" for="penanggung_jawab">
                         Penanggung Jawab
                     </label>
 
                     <input
                         type="text"
-                        id="penanggung_jawab"
                         name="penanggung_jawab"
+                        id="penanggung_jawab"
+                        class="form-control"
                         value="{{ old('penanggung_jawab', $jadwal->penanggung_jawab) }}"
-                        placeholder="Contoh: Ketua Divisi Acara"
-                        class="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
+                        placeholder="Contoh: Divisi Acara"
                     >
+
+                    @error('penanggung_jawab')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
                 </div>
 
-                {{-- KETERANGAN --}}
-                <div>
-                    <label
-                        for="keterangan"
-                        class="mb-2 block text-sm font-semibold text-gray-700"
-                    >
+                {{-- Keterangan --}}
+                <div class="form-group full">
+                    <label class="form-label" for="keterangan">
                         Keterangan
                     </label>
 
                     <textarea
-                        id="keterangan"
                         name="keterangan"
-                        rows="4"
-                        placeholder="Tambahkan keterangan jadwal..."
-                        class="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
+                        id="keterangan"
+                        class="form-control"
+                        placeholder="Tambahkan keterangan jadwal jika diperlukan..."
                     >{{ old('keterangan', $jadwal->keterangan) }}</textarea>
+
+                    @error('keterangan')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
                 </div>
 
-                {{-- STATUS --}}
-                <div>
-                    <label
-                        for="status"
-                        class="mb-2 block text-sm font-semibold text-gray-700"
-                    >
-                        Status
-                    </label>
-
-                    <select
-                        id="status"
-                        name="status"
-                        required
-                        class="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
-                    >
-
-                        <option
-                            value="terjadwal"
-                            {{ old('status', $jadwal->status) === 'terjadwal' ? 'selected' : '' }}
-                        >
-                            Terjadwal
-                        </option>
-
-                        <option
-                            value="berlangsung"
-                            {{ old('status', $jadwal->status) === 'berlangsung' ? 'selected' : '' }}
-                        >
-                            Berlangsung
-                        </option>
-
-                        <option
-                            value="selesai"
-                            {{ old('status', $jadwal->status) === 'selesai' ? 'selected' : '' }}
-                        >
-                            Selesai
-                        </option>
-
-                        <option
-                            value="dibatalkan"
-                            {{ old('status', $jadwal->status) === 'dibatalkan' ? 'selected' : '' }}
-                        >
-                            Dibatalkan
-                        </option>
-
-                    </select>
-                </div>
-
-                {{-- TOMBOL --}}
-                <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end">
-
-                    <a
-                        href="{{ route('eo.jadwal.index') }}"
-                        class="rounded-lg border border-gray-300 px-5 py-3 text-center text-sm font-semibold text-gray-700 hover:bg-gray-50"
-                    >
-                        Batal
-                    </a>
-
-                    <button
-                        type="submit"
-                        class="rounded-lg bg-green-600 px-5 py-3 text-sm font-semibold text-white hover:bg-green-700"
-                    >
-                        Simpan Perubahan
-                    </button>
-
-                </div>
-
-            </form>
+            </div>
 
         </div>
 
-    </div>
+        <div class="form-footer">
+
+            <a
+                href="{{ route('eo.jadwal.index') }}"
+                class="btn btn-back"
+            >
+                Batal
+            </a>
+
+            <button type="submit" class="btn btn-save">
+                Simpan Perubahan
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
 
 </x-layouts.eo>
-

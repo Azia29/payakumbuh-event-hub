@@ -24,6 +24,24 @@ class NegosiasiSponsorController extends Controller
         );
     }
 
+    public function all()
+    {
+        $user = auth()->user();
+
+        $pengajuans = PengajuanSponsor::with([
+            'sponsor',
+            'paket.event',
+            'negosiasi',
+        ])
+        ->latest()
+        ->get();
+
+        return view(
+            'eo.sponsorship.negosiasi.all',
+            compact('user', 'pengajuans')
+        );
+    }
+
     public function store(
         Request $request,
         PengajuanSponsor $pengajuanSponsor

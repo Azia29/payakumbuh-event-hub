@@ -22,42 +22,42 @@
                     <div>
                         <p class="text-xs uppercase text-gray-400">Perusahaan</p>
                         <p class="mt-1 font-semibold text-gray-900">
-                            {{ $pengajuan->sponsor?->nama_perusahaan ?? '-' }}
+                            {{ $pengajuanSponsor->sponsor?->nama_perusahaan ?? '-' }}
                         </p>
                     </div>
 
                     <div>
                         <p class="text-xs uppercase text-gray-400">Kontak</p>
                         <p class="mt-1 text-gray-700">
-                            {{ $pengajuan->sponsor?->nama_kontak ?? '-' }}
+                            {{ $pengajuanSponsor->sponsor?->nama_kontak ?? '-' }}
                         </p>
                     </div>
 
                     <div>
                         <p class="text-xs uppercase text-gray-400">Email</p>
                         <p class="mt-1 text-gray-700">
-                            {{ $pengajuan->sponsor?->email ?? '-' }}
+                            {{ $pengajuanSponsor->sponsor?->email ?? '-' }}
                         </p>
                     </div>
 
                     <div>
                         <p class="text-xs uppercase text-gray-400">Paket</p>
                         <p class="mt-1 font-semibold text-gray-900">
-                            {{ $pengajuan->paket?->nama_paket ?? '-' }}
+                            {{ $pengajuanSponsor->paket?->nama_paket ?? '-' }}
                         </p>
                     </div>
 
                     <div>
                         <p class="text-xs uppercase text-gray-400">Event</p>
                         <p class="mt-1 text-gray-700">
-                            {{ $pengajuan->paket?->event?->nama_event ?? '-' }}
+                            {{ $pengajuanSponsor->paket?->event?->nama_event ?? '-' }}
                         </p>
                     </div>
 
                     <div>
                         <p class="text-xs uppercase text-gray-400">Nominal</p>
                         <p class="mt-1 font-semibold text-emerald-600">
-                            Rp {{ number_format((float) $pengajuan->nominal_pengajuan, 0, ',', '.') }}
+                            Rp {{ number_format((float) $pengajuanSponsor->nominal_pengajuan, 0, ',', '.') }}
                         </p>
                     </div>
 
@@ -70,7 +70,7 @@
                     </p>
 
                     <p class="mt-2 whitespace-pre-line text-sm leading-6 text-gray-600">
-                        {{ $pengajuan->pesan ?: 'Tidak ada pesan.' }}
+                        {{ $pengajuanSponsor->pesan ?: 'Tidak ada pesan.' }}
                     </p>
 
                 </div>
@@ -84,7 +84,7 @@
                     Status Pengajuan
                 </h2>
 
-                <form action="{{ route('eo.sponsorship.pengajuan.status', $pengajuan) }}"
+                <form action="{{ route('eo.sponsorship.pengajuan.status', $pengajuanSponsor) }}"
                       method="POST"
                       class="mt-5">
 
@@ -104,7 +104,7 @@
                         ] as $value => $label)
 
                             <option value="{{ $value }}"
-                                {{ $pengajuan->status === $value ? 'selected' : '' }}>
+                                {{ $pengajuanSponsor->status === $value ? 'selected' : '' }}>
                                 {{ $label }}
                             </option>
 
@@ -115,7 +115,7 @@
                     <textarea name="catatan_eo"
                               rows="5"
                               placeholder="Catatan EO..."
-                              class="mt-3 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm">{{ old('catatan_eo', $pengajuan->catatan_eo) }}</textarea>
+                              class="mt-3 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm">{{ old('catatan_eo', $pengajuanSponsor->catatan_eo) }}</textarea>
 
                     <button type="submit"
                             class="mt-3 w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-700">
@@ -125,9 +125,9 @@
                 </form>
 
 
-                @if($pengajuan->status === 'negosiasi')
+                @if($pengajuanSponsor->status === 'negosiasi')
 
-                    <a href="{{ route('eo.sponsorship.negosiasi.index', $pengajuan) }}"
+                    <a href="{{ route('eo.sponsorship.negosiasi.index', $pengajuanSponsor) }}"
                        class="mt-3 block rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-center text-sm font-semibold text-blue-700 hover:bg-blue-100">
                         Buka Negosiasi
                     </a>

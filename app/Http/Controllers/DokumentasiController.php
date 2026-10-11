@@ -24,6 +24,45 @@ class DokumentasiController extends Controller
         ));
     }
 
+    public function galeri(Request $request)
+    {
+        $user = Auth::user();
+        $events = Event::orderBy('nama_event')->get();
+
+        $items = Dokumentasi::with('event')
+            ->dipublikasi()
+            ->whereRaw("LOWER(jenis) IN ('foto', 'video')")
+            ->when($request->filled('event_id'), function ($query) use ($request) {
+                $query->where('event_id', $request->event_id);
+            })
+            ->latest('published_at')
+            ->get();
+
+        return view('eo.dokumentasi.galeri', compact('user', 'events', 'items'));
+    }
+
+    public function ajukan(Dokumentasi $dokumentasi)
+    {
+        if (($dokumentasi->status ?? 'draft') !== 'draft') {
+            return back()->with('error', 'Hanya dokumentasi berstatus draft yang bisa diajukan.');
+        }
+
+        $dokumentasi->update(['status' => 'diajukan']);
+
+        return back()->with('success', 'Dokumentasi berhasil diajukan ke admin untuk dipublikasi.');
+    }
+
+    public function batalkanPengajuan(Dokumentasi $dokumentasi)
+    {
+        if ($dokumentasi->status !== 'diajukan') {
+            return back()->with('error', 'Hanya pengajuan yang masih menunggu admin yang bisa dibatalkan.');
+        }
+
+        $dokumentasi->update(['status' => 'draft']);
+
+        return back()->with('success', 'Pengajuan dibatalkan. Dokumentasi kembali menjadi draft.');
+    }
+
     public function create()
     {
         $user = Auth::user();
@@ -52,6 +91,8 @@ class DokumentasiController extends Controller
                 ->store('dokumentasi', 'public');
         }
 
+        $validated['status'] = 'draft';
+
         Dokumentasi::create($validated);
 
         return redirect()
@@ -73,6 +114,12 @@ class DokumentasiController extends Controller
 
     public function edit(Dokumentasi $dokumentasi)
     {
+        if (($dokumentasi->status ?? 'draft') !== 'draft') {
+            return redirect()
+                ->route('eo.dokumentasi.show', $dokumentasi)
+                ->with('error', 'Dokumentasi yang sedang diajukan atau sudah dipublikasi tidak bisa diedit oleh EO.');
+        }
+
         $user = Auth::user();
         $events = Event::orderBy('nama_event')->get();
 
@@ -85,6 +132,10 @@ class DokumentasiController extends Controller
 
     public function update(Request $request, Dokumentasi $dokumentasi)
     {
+        if (in_array($dokumentasi->status, ['diajukan', 'dipublikasi'])) {
+            return back()->with('error', 'Dokumentasi yang sedang diajukan atau sudah dipublikasi tidak bisa diubah atau dihapus oleh EO.');
+        }
+
         $validated = $request->validate([
             'event_id' => ['required', 'exists:events,id'],
             'judul' => ['required', 'string', 'max:255'],
@@ -119,6 +170,10 @@ class DokumentasiController extends Controller
 
     public function destroy(Dokumentasi $dokumentasi)
     {
+        if (in_array($dokumentasi->status, ['diajukan', 'dipublikasi'])) {
+            return back()->with('error', 'Dokumentasi yang sedang diajukan atau sudah dipublikasi tidak bisa diubah atau dihapus oleh EO.');
+        }
+
         if (
             $dokumentasi->file &&
             Storage::disk('public')->exists($dokumentasi->file)

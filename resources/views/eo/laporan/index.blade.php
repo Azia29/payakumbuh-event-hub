@@ -571,8 +571,8 @@
         <div class="card">
 
             <div class="card-header">
-                <h2>Fokus Evaluasi</h2>
-                <p>Aspek yang diperhatikan Ketua EO.</p>
+                <h2>Ringkasan Modul</h2>
+                <p>Rekap event, sponsorship, dokumentasi, dan panitia.</p>
             </div>
 
             <div class="focus">
@@ -581,31 +581,31 @@
                     <div class="focus-number">01</div>
                     <div>
                         <strong>Event</strong>
-                        <span>Memantau jumlah dan kondisi event.</span>
+                        <span>{{ $eventDraft ?? 0 }} dari {{ $totalEventValue }} event masih berstatus draft.</span>
                     </div>
                 </div>
 
                 <div class="focus-item">
                     <div class="focus-number">02</div>
                     <div>
-                        <strong>Kegiatan</strong>
-                        <span>Melihat aktivitas dalam setiap event.</span>
+                        <strong>Sponsorship</strong>
+                        <span>{{ $totalPaket ?? 0 }} paket, {{ $totalPengajuan ?? 0 }} pengajuan ({{ $pengajuanNegosiasi ?? 0 }} dalam negosiasi), {{ $totalDukungan ?? 0 }} dukungan.</span>
                     </div>
                 </div>
 
                 <div class="focus-item">
                     <div class="focus-number">03</div>
                     <div>
-                        <strong>Rundown</strong>
-                        <span>Memastikan susunan kegiatan tersedia.</span>
+                        <strong>Dokumentasi</strong>
+                        <span>{{ $dokDraft ?? 0 }} draft, {{ $dokDiajukan ?? 0 }} menunggu admin, {{ $dokDipublikasi ?? 0 }} dipublikasi.</span>
                     </div>
                 </div>
 
                 <div class="focus-item">
                     <div class="focus-number">04</div>
                     <div>
-                        <strong>Jadwal</strong>
-                        <span>Memantau kesiapan jadwal pelaksanaan.</span>
+                        <strong>Panitia</strong>
+                        <span>{{ $totalPanitia ?? 0 }} panitia terdaftar.</span>
                     </div>
                 </div>
 
@@ -637,6 +637,7 @@
                             <th>Mulai</th>
                             <th>Selesai</th>
                             <th>Status</th>
+                            <th>Dokumentasi</th>
                         </tr>
                     </thead>
 
@@ -675,6 +676,10 @@
                                     <span class="status">
                                         {{ ucfirst($event->status ?? 'Draft') }}
                                     </span>
+                                </td>
+
+                                <td>
+                                    {{ $dokumentasiPerEvent[$event->id] ?? 0 }}
                                 </td>
                             </tr>
 

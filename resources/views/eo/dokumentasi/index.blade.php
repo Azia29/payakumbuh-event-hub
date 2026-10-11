@@ -341,6 +341,53 @@
         color: #b91c1c;
     }
 
+        /* STATUS */
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 10px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-draft {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .status-published {
+        background: #f0fdf4;
+        color: #15803d;
+    }
+
+    .alert-error {
+        margin-bottom: 18px;
+        padding: 13px 16px;
+        border-radius: 11px;
+        border: 1px solid #fecaca;
+        background: #fef2f2;
+        color: #b91c1c;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+        .status-diajukan {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    .action-submit {
+        color: #15803d;
+    }
+
+    .action-submit:hover {
+        background: #f0fdf4;
+        border-color: #86efac;
+        color: #166534;
+    }
+
     /* EMPTY */
     .empty-state {
         text-align: center;
@@ -444,6 +491,16 @@
     @endif
 
 
+    {{-- ERROR MESSAGE --}}
+    @if(session('error'))
+
+        <div class="alert-error">
+            {{ session('error') }}
+        </div>
+
+    @endif
+
+
     {{-- TOOLBAR --}}
     <div class="toolbar">
 
@@ -509,6 +566,7 @@
                             <th>Jenis</th>
                             <th>Event</th>
                             <th>Tanggal</th>
+                            <th>Status</th>
                             <th>Aksi</th>
                         </tr>
 
@@ -632,6 +690,30 @@
                                 </td>
 
 
+                                {{-- STATUS --}}
+                                <td>
+
+                                    @if(($item->status ?? 'draft') === 'dipublikasi')
+
+                                        <span class="status-badge status-published">
+                                            Dipublikasi
+                                        </span>
+
+                                    @elseif(($item->status ?? '') === 'diajukan')
+
+                                        <span class="status-badge status-diajukan">Menunggu Admin</span>
+
+                                        @else
+
+                                        <span class="status-badge status-draft">
+                                            Draft
+                                        </span>
+
+                                    @endif
+
+                                </td>
+
+
                                 {{-- AKSI --}}
                                 <td>
 
@@ -644,7 +726,9 @@
                                             Detail
                                         </a>
 
-                                        <a
+                                        @if(($item->status ?? 'draft') === 'draft')
+
+<a
                                             href="{{ route('eo.dokumentasi.edit', $item) }}"
                                             class="action-btn action-edit"
                                         >
@@ -669,6 +753,36 @@
                                             </button>
 
                                         </form>
+
+                                        @endif
+
+                                        @if(($item->status ?? 'draft') === 'draft')
+
+                                            <form
+                                                action="{{ route('eo.dokumentasi.ajukan', $item) }}"
+                                                method="POST"
+                                                onsubmit="return confirm('Ajukan dokumentasi ini ke admin untuk dipublikasi?')"
+                                                style="display:inline;"
+                                            >
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="action-btn action-submit">Ajukan</button>
+                                            </form>
+
+                                        @elseif(($item->status ?? '') === 'diajukan')
+
+                                            <form
+                                                action="{{ route('eo.dokumentasi.batalkan', $item) }}"
+                                                method="POST"
+                                                onsubmit="return confirm('Batalkan pengajuan ini?')"
+                                                style="display:inline;"
+                                            >
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="action-btn">Batalkan</button>
+                                            </form>
+
+                                        @endif
 
                                     </div>
 

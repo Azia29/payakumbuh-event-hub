@@ -164,7 +164,7 @@
 <div class="card">
 
     <form
-        action="{{ route('eo.panitia.update', $panitia) }}"
+        action="{{ route('eo.panitia.update', ['panitia' => $panitia->id]) }}"
         method="POST">
 
         @csrf
@@ -278,3 +278,7 @@
 </div>
 
 </x-layouts.eo>
+
+
+
+

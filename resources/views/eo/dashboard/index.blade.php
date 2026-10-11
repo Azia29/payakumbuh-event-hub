@@ -2,434 +2,798 @@
 
 <div class="eo-page">
 
-    <div class="eo-hero">
-        <div>
-            <span class="eo-badge">EO EVENT HUB</span>
-            <h1>Dashboard EO</h1>
-            <p>
-                Kelola seluruh kegiatan event dalam satu dashboard.
-            </p>
+    {{-- STATISTIK --}}
+    <section>
+        <div class="section-heading">
+            <div>
+                <h2>Statistik</h2>
+                <p>Ringkasan kondisi event dan tugas panitia.</p>
+            </div>
         </div>
 
-        <div class="eo-user-box">
-            <div class="eo-avatar">
-                {{ strtoupper(substr($user->name ?? 'E', 0, 1)) }}
+        <div class="eo-stats">
+
+            <div class="stat-card">
+                <span class="stat-icon">EV</span>
+                <div>
+                    <small>Total Event</small>
+                    <strong>{{ $totalEvent }}</strong>
+                    <span>Seluruh event</span>
+                </div>
             </div>
+
+            <div class="stat-card">
+                <span class="stat-icon">AK</span>
+                <div>
+                    <small>Event Aktif</small>
+                    <strong>{{ $eventAktif }}</strong>
+                    <span>Event sedang berjalan</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-icon">PN</span>
+                <div>
+                    <small>Total Panitia</small>
+                    <strong>{{ $totalPanitia }}</strong>
+                    <span>Anggota panitia</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-icon">TG</span>
+                <div>
+                    <small>Total Tugas</small>
+                    <strong>{{ $totalTugas }}</strong>
+                    <span>Seluruh tugas</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-icon">BJ</span>
+                <div>
+                    <small>Tugas Berjalan</small>
+                    <strong>{{ $tugasBerjalan }}</strong>
+                    <span>Sedang dikerjakan</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-icon">SL</span>
+                <div>
+                    <small>Tugas Selesai</small>
+                    <strong>{{ $tugasSelesai }}</strong>
+                    <span>Sudah diselesaikan</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    {{-- AKSES CEPAT --}}
+    <section class="dashboard-section">
+
+        <div class="section-heading">
             <div>
-                <strong>{{ $user->name ?? 'EO' }}</strong>
-                <small>Event Organizer</small>
+                <h2>Akses Cepat</h2>
+                <p>Akses fitur utama pengelolaan event.</p>
             </div>
         </div>
-    </div>
 
-    <div class="eo-stats">
+        <div class="quick-grid">
 
-        <div class="eo-stat">
-            <span>Total Event</span>
-            <strong>{{ $totalEvent }}</strong>
+            <a href="{{ route('eo.events.index') }}" class="quick-card">
+                <span>EV</span>
+                <div>
+                    <strong>Kelola Event</strong>
+                    <small>Buat dan kelola event</small>
+                </div>
+            </a>
+
+            <a href="{{ route('eo.rundown.index') }}" class="quick-card">
+                <span>RD</span>
+                <div>
+                    <strong>Rundown</strong>
+                    <small>Atur susunan acara</small>
+                </div>
+            </a>
+
+            <a href="{{ route('eo.jadwal.index') }}" class="quick-card">
+                <span>JD</span>
+                <div>
+                    <strong>Jadwal</strong>
+                    <small>Kelola jadwal kegiatan</small>
+                </div>
+            </a>
+
+            <a href="{{ route('eo.perlengkapan.index') }}" class="quick-card">
+                <span>PR</span>
+                <div>
+                    <strong>Perlengkapan</strong>
+                    <small>Kelola kebutuhan event</small>
+                </div>
+            </a>
+
+            <a href="{{ route('eo.monitoring') }}" class="quick-card">
+                <span>MN</span>
+                <div>
+                    <strong>Monitoring</strong>
+                    <small>Pantau kegiatan event</small>
+                </div>
+            </a>
+
+            <a href="{{ route('eo.panitia.index') }}" class="quick-card">
+                <span>PN</span>
+                <div>
+                    <strong>Kelola Panitia</strong>
+                    <small>Kelola anggota panitia</small>
+                </div>
+            </a>
+
+            <a href="{{ route('eo.panitia.tugas.index') }}" class="quick-card">
+                <span>PT</span>
+                <div>
+                    <strong>Pembagian Tugas</strong>
+                    <small>Kelola tugas panitia</small>
+                </div>
+            </a>
+
+            <a href="{{ route('eo.sponsorship.paket.index') }}" class="quick-card">
+                <span>SP</span>
+                <div>
+                    <strong>Sponsorship</strong>
+                    <small>Kelola sponsorship event</small>
+                </div>
+            </a>
+
+            <a href="{{ route('eo.dokumentasi.index') }}" class="quick-card">
+                <span>DK</span>
+                <div>
+                    <strong>Dokumentasi</strong>
+                    <small>Kelola dokumentasi event</small>
+                </div>
+            </a>
+
+            <a href="{{ route('eo.laporan') }}" class="quick-card">
+                <span>LP</span>
+                <div>
+                    <strong>Laporan</strong>
+                    <small>Lihat laporan event</small>
+                </div>
+            </a>
+
         </div>
 
-        <div class="eo-stat">
-            <span>Event Aktif</span>
-            <strong>{{ $eventAktif }}</strong>
+    </section>
+
+    {{-- PROGRESS TUGAS --}}
+    <section class="dashboard-section">
+
+        <div class="section-heading section-heading-row">
+            <div>
+                <h2>Progress Tugas Panitia</h2>
+                <p>Ringkasan status seluruh tugas panitia.</p>
+            </div>
+
+            <a href="{{ route('eo.panitia.tugas.index') }}" class="section-link">
+                Lihat Semua
+            </a>
         </div>
 
-        <div class="eo-stat">
-            <span>Total Panitia</span>
-            <strong>{{ $totalPanitia }}</strong>
+        <div class="progress-grid">
+
+            <div class="progress-card">
+                <div>
+                    <span>Belum Dimulai</span>
+                    <strong>{{ $tugasBelumDimulai }}</strong>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill"
+                         style="width: {{ $totalTugas > 0 ? ($tugasBelumDimulai / $totalTugas) * 100 : 0 }}%;">
+                    </div>
+                </div>
+                <small>tugas</small>
+            </div>
+
+            <div class="progress-card">
+                <div>
+                    <span>Sedang Dikerjakan</span>
+                    <strong>{{ $tugasBerjalan }}</strong>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill"
+                         style="width: {{ $totalTugas > 0 ? ($tugasBerjalan / $totalTugas) * 100 : 0 }}%;">
+                    </div>
+                </div>
+                <small>tugas</small>
+            </div>
+
+            <div class="progress-card">
+                <div>
+                    <span>Selesai</span>
+                    <strong>{{ $tugasSelesai }}</strong>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill"
+                         style="width: {{ $totalTugas > 0 ? ($tugasSelesai / $totalTugas) * 100 : 0 }}%;">
+                    </div>
+                </div>
+                <small>tugas</small>
+            </div>
+
         </div>
 
-        <div class="eo-stat">
-            <span>Paket Sponsor</span>
-            <strong>{{ $totalPaket }}</strong>
+    </section>
+
+    {{-- INFORMASI PANITIA --}}
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+            <div>
+                <h2>Informasi Panitia</h2>
+                <p>Informasi dan komunikasi yang berkaitan dengan panitia.</p>
+            </div>
         </div>
 
-        <div class="eo-stat">
-            <span>Pengajuan Sponsor</span>
-            <strong>{{ $totalPengajuan }}</strong>
+        <div class="information-grid">
+
+            <div class="information-card">
+                <div class="information-icon">PG</div>
+
+                <div>
+                    <span>Pengumuman</span>
+                    <h3>Informasi Panitia</h3>
+                    <p>
+                        Tempat untuk menyampaikan informasi penting
+                        kepada panitia.
+                    </p>
+                    <button type="button" class="disabled-button">
+                        Segera Hadir
+                    </button>
+                </div>
+            </div>
+
+            <div class="information-card">
+                <div class="information-icon warning">KD</div>
+
+                <div>
+                    <span>Kendala Panitia</span>
+                    <h3>Laporan Kendala</h3>
+                    <p>
+                        Pantau kendala atau masalah yang dilaporkan
+                        oleh panitia.
+                    </p>
+                    <button type="button" class="disabled-button">
+                        Segera Hadir
+                    </button>
+                </div>
+            </div>
+
         </div>
 
-    </div>
+    </section>
 
-    <div class="eo-grid">
+    {{-- SPONSORSHIP --}}
+    <section class="dashboard-section">
 
-        <a href="{{ route('eo.events.index') }}" class="eo-menu">
-            <span>EV</span>
+        <div class="section-heading">
             <div>
-                <strong>Kelola Event</strong>
-                <small>Buat dan kelola event</small>
+                <h2>Sponsorship</h2>
+                <p>Ringkasan sponsorship event.</p>
             </div>
-        </a>
+        </div>
 
-        <a href="{{ route('eo.rundown.index') }}" class="eo-menu">
-            <span>RD</span>
-            <div>
-                <strong>Rundown Acara</strong>
-                <small>Atur susunan acara</small>
-            </div>
-        </a>
+        <div class="sponsor-grid">
 
-        <a href="{{ route('eo.jadwal.index') }}" class="eo-menu">
-            <span>JD</span>
-            <div>
-                <strong>Jadwal Kegiatan</strong>
-                <small>Kelola jadwal event</small>
-            </div>
-        </a>
+            <a href="{{ route('eo.sponsorship.paket.index') }}" class="sponsor-card">
+                <span>SP</span>
+                <div>
+                    <small>Paket Sponsorship</small>
+                    <strong>{{ $totalPaket }}</strong>
+                </div>
+            </a>
 
-        <a href="{{ route('eo.perlengkapan.index') }}" class="eo-menu">
-            <span>PR</span>
-            <div>
-                <strong>Perlengkapan</strong>
-                <small>Kelola kebutuhan event</small>
-            </div>
-        </a>
+            <a href="{{ route('eo.sponsorship.pengajuan.index') }}" class="sponsor-card">
+                <span>PG</span>
+                <div>
+                    <small>Pengajuan Sponsor</small>
+                    <strong>{{ $totalPengajuan }}</strong>
+                </div>
+            </a>
 
-        <a href="{{ route('eo.monitoring') }}" class="eo-menu">
-            <span>MN</span>
-            <div>
-                <strong>Monitoring</strong>
-                <small>Pantau kegiatan event</small>
-            </div>
-        </a>
+        </div>
 
-        <a href="{{ route('eo.panitia.index') }}" class="eo-menu">
-            <span>PN</span>
-            <div>
-                <strong>Kelola Panitia</strong>
-                <small>Kelola anggota panitia</small>
-            </div>
-        </a>
+    </section>
 
-        <a href="{{ route('eo.sponsorship.paket.index') }}" class="eo-menu">
-            <span>SP</span>
-            <div>
-                <strong>Paket Sponsorship</strong>
-                <small>Kelola paket sponsor</small>
-            </div>
-        </a>
+    {{-- EVENT TERBARU --}}
+    <section class="dashboard-section">
 
-        <a href="{{ route('eo.sponsorship.pengajuan.index') }}" class="eo-menu">
-            <span>PG</span>
-            <div>
-                <strong>Pengajuan Sponsor</strong>
-                <small>Review pengajuan sponsor</small>
-            </div>
-        </a>
-
-        <a href="{{ route('eo.sponsorship.negosiasi.index', 1) }}" class="eo-menu">
-            <span>NG</span>
-            <div>
-                <strong>Negosiasi</strong>
-                <small>Kelola negosiasi sponsor</small>
-            </div>
-        </a>
-
-        <a href="{{ route('eo.sponsorship.dukungan.index') }}" class="eo-menu">
-            <span>DK</span>
-            <div>
-                <strong>Dukungan Sponsor</strong>
-                <small>Kelola dukungan sponsor</small>
-            </div>
-        </a>
-
-        <a href="{{ route('eo.dokumentasi.index') }}" class="eo-menu">
-            <span>DK</span>
-            <div>
-                <strong>Dokumentasi</strong>
-                <small>Kelola dokumentasi event</small>
-            </div>
-        </a>
-
-        <a href="{{ route('eo.laporan') }}" class="eo-menu">
-            <span>LP</span>
-            <div>
-                <strong>Laporan Event</strong>
-                <small>Lihat laporan kegiatan</small>
-            </div>
-        </a>
-
-    </div>
-
-    <div class="eo-events">
-        <div class="eo-section-title">
+        <div class="section-heading section-heading-row">
             <div>
                 <h2>Event Terbaru</h2>
                 <p>Daftar event terbaru yang dikelola EO.</p>
             </div>
 
-            <a href="{{ route('eo.events.index') }}">Lihat Semua</a>
+            <a href="{{ route('eo.events.index') }}" class="section-link">
+                Lihat Semua
+            </a>
         </div>
 
-        @forelse($events as $event)
+        <div class="event-table">
 
-            <div class="eo-event-row">
+            <div class="event-table-header">
+                <span>Nama Event</span>
+                <span>Lokasi</span>
+                <span>Tanggal</span>
+                <span>Status</span>
+            </div>
 
-                <div>
-                    <strong>{{ $event->nama_event }}</strong>
-                    <span>
+            @forelse($events as $event)
+
+                <div class="event-row">
+
+                    <div>
+                        <strong>{{ $event->nama_event }}</strong>
+                    </div>
+
+                    <div>
                         {{ $event->lokasi_event ?? 'Lokasi belum ditentukan' }}
-                    </span>
+                    </div>
+
+                    <div>
+                        {{ $event->tgl_mulai
+                            ? \Carbon\Carbon::parse($event->tgl_mulai)->format('d M Y')
+                            : '-'
+                        }}
+                    </div>
+
+                    <div>
+                        <span class="status-badge">
+                            {{ ucfirst($event->status ?? 'draft') }}
+                        </span>
+                    </div>
+
                 </div>
 
-                <div>
-                    <span>
-                        {{ $event->tgl_mulai ? \Carbon\Carbon::parse($event->tgl_mulai)->format('d M Y') : '-' }}
-                    </span>
+            @empty
+
+                <div class="empty-state">
+                    Belum ada event.
                 </div>
 
-                <div>
-                    <span class="eo-status">
-                        {{ ucfirst($event->status ?? 'draft') }}
-                    </span>
-                </div>
+            @endforelse
 
-            </div>
+        </div>
 
-        @empty
-
-            <div class="eo-empty">
-                Belum ada event.
-            </div>
-
-        @endforelse
-
-    </div>
+    </section>
 
 </div>
 
 <style>
 
 .eo-page {
-    padding: 28px;
+    padding: 0 28px 28px;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-.eo-hero {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:20px;
-    padding:28px;
-    border-radius:20px;
-    background:#ffffff;
-    border:1px solid #e5e7eb;
-    box-shadow:0 8px 25px rgba(15,23,42,.06);
+.eo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 18px 28px 28px;
+    margin-bottom: 28px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(15, 23, 42, .05);
 }
 
 .eo-badge {
-    display:inline-block;
-    padding:6px 10px;
-    border-radius:999px;
-    background:#ecfdf5;
-    color:#047857;
-    font-size:11px;
-    font-weight:700;
-    letter-spacing:.06em;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    color: #10b981;
+    margin-bottom: 8px;
 }
 
-.eo-hero h1 {
-    margin:10px 0 5px;
-    color:#111827;
-    font-size:28px;
+.eo-header h1 {
+    margin: 0;
+    font-size: 30px;
+    color: #111827;
 }
 
-.eo-hero p {
-    margin:0;
-    color:#64748b;
+.eo-header p {
+    margin: 8px 0 0;
+    color: #64748b;
 }
 
 .eo-user-box {
-    display:flex;
-    align-items:center;
-    gap:12px;
-}
-
-.eo-user-box small {
-    display:block;
-    color:#64748b;
-    margin-top:3px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 210px;
 }
 
 .eo-avatar {
-    width:44px;
-    height:44px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#10b981;
-    color:#fff;
-    font-weight:800;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #10b981;
+    color: #ffffff;
+    font-weight: 800;
+}
+
+.eo-user-box strong {
+    display: block;
+    color: #111827;
+}
+
+.eo-user-box small {
+    color: #64748b;
+}
+
+.section-heading {
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+.section-heading-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.section-heading h2 {
+    margin: 0;
+    color: #111827;
+    font-size: 20px;
+}
+
+.section-heading p {
+    margin: 5px 0 0;
+    color: #64748b;
+    font-size: 14px;
 }
 
 .eo-stats {
-    display:grid;
-    grid-template-columns:repeat(5,1fr);
-    gap:15px;
-    margin-top:20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
 }
 
-.eo-stat {
-    background:#fff;
-    border:1px solid #e5e7eb;
-    border-radius:16px;
-    padding:20px;
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, .04);
 }
 
-.eo-stat span {
-    display:block;
-    color:#64748b;
-    font-size:13px;
+.stat-icon,
+.quick-card > span,
+.sponsor-card > span,
+.information-icon {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ecfdf5;
+    color: #059669;
+    font-size: 12px;
+    font-weight: 800;
 }
 
-.eo-stat strong {
-    display:block;
-    color:#111827;
-    font-size:27px;
-    margin-top:8px;
+.stat-card small,
+.stat-card > div > span {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
 }
 
-.eo-grid {
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:15px;
-    margin-top:20px;
+.stat-card strong {
+    display: block;
+    margin: 3px 0;
+    font-size: 26px;
+    color: #111827;
 }
 
-.eo-menu {
-    display:flex;
-    align-items:center;
-    gap:14px;
-    padding:18px;
-    border-radius:16px;
-    border:1px solid #e5e7eb;
-    background:#fff;
-    text-decoration:none;
-    transition:.2s;
+.dashboard-section {
+    margin-top: 32px;
 }
 
-.eo-menu:hover {
-    transform:translateY(-2px);
-    box-shadow:0 8px 20px rgba(15,23,42,.08);
-    border-color:#a7f3d0;
+.quick-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
 }
 
-.eo-menu > span {
-    width:42px;
-    height:42px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:12px;
-    background:#ecfdf5;
-    color:#047857;
-    font-size:12px;
-    font-weight:800;
+.quick-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 15px;
+    text-decoration: none;
+    transition: .2s ease;
 }
 
-.eo-menu strong {
-    display:block;
-    color:#111827;
+.quick-card:hover,
+.sponsor-card:hover {
+    transform: translateY(-2px);
+    border-color: #a7f3d0;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, .07);
 }
 
-.eo-menu small {
-    display:block;
-    color:#64748b;
-    margin-top:4px;
+.quick-card strong,
+.sponsor-card strong {
+    display: block;
+    color: #111827;
 }
 
-.eo-events {
-    margin-top:20px;
-    padding:22px;
-    border-radius:18px;
-    background:#fff;
-    border:1px solid #e5e7eb;
+.quick-card small {
+    display: block;
+    margin-top: 4px;
+    color: #64748b;
+    font-size: 12px;
 }
 
-.eo-section-title {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:15px;
+.progress-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
 }
 
-.eo-section-title h2 {
-    margin:0;
-    color:#111827;
+.progress-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 20px;
 }
 
-.eo-section-title p {
-    margin:5px 0 0;
-    color:#64748b;
-    font-size:13px;
+.progress-card > div:first-child {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.eo-section-title a {
-    color:#047857;
-    text-decoration:none;
-    font-weight:700;
+.progress-card span {
+    color: #475569;
+    font-weight: 600;
 }
 
-.eo-event-row {
-    display:grid;
-    grid-template-columns:2fr 1fr 1fr;
-    gap:15px;
-    padding:15px 0;
-    border-top:1px solid #f1f5f9;
+.progress-card strong {
+    font-size: 24px;
+    color: #111827;
 }
 
-.eo-event-row strong,
-.eo-event-row span {
-    display:block;
+.progress-card small {
+    color: #64748b;
 }
 
-.eo-event-row span {
-    color:#64748b;
-    font-size:13px;
-    margin-top:4px;
+.progress-track {
+    height: 8px;
+    margin: 16px 0 8px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
 }
 
-.eo-status {
-    display:inline-block !important;
-    padding:5px 9px;
-    border-radius:999px;
-    background:#f0fdf4;
-    color:#15803d !important;
+.progress-fill {
+    height: 100%;
+    background: #10b981;
+    border-radius: 999px;
 }
 
-.eo-empty {
-    padding:30px;
-    text-align:center;
-    color:#64748b;
+.information-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
 }
 
-@media(max-width:900px) {
+.information-card {
+    display: flex;
+    gap: 16px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 22px;
+}
+
+.information-icon.warning {
+    background: #fff7ed;
+    color: #ea580c;
+}
+
+.information-card > div:last-child {
+    flex: 1;
+}
+
+.information-card span {
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+}
+
+.information-card h3 {
+    margin: 5px 0;
+    color: #111827;
+}
+
+.information-card p {
+    margin: 0 0 14px;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+.disabled-button {
+    border: 0;
+    padding: 8px 13px;
+    border-radius: 8px;
+    background: #f1f5f9;
+    color: #64748b;
+    cursor: default;
+}
+
+.sponsor-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.sponsor-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    text-decoration: none;
+}
+
+.sponsor-card small {
+    display: block;
+    color: #64748b;
+}
+
+.sponsor-card strong {
+    font-size: 25px;
+    margin-top: 3px;
+}
+
+.event-table {
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+}
+
+.event-table-header,
+.event-row {
+    display: grid;
+    grid-template-columns: 1.3fr 2fr 1fr .8fr;
+    gap: 16px;
+    align-items: center;
+    padding: 16px 20px;
+}
+
+.event-table-header {
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.event-row {
+    border-top: 1px solid #f1f5f9;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.event-row strong {
+    color: #111827;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.section-link {
+    color: #059669;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.empty-state {
+    padding: 30px;
+    text-align: center;
+    color: #64748b;
+}
+
+@media (max-width: 1100px) {
+    .quick-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
     .eo-stats {
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .eo-grid {
-        grid-template-columns:1fr 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
-@media(max-width:600px) {
-    .eo-hero,
-    .eo-section-title {
-        align-items:flex-start;
-        flex-direction:column;
+@media (max-width: 760px) {
+    .eo-page {
+        padding: 16px;
+    }
+
+    .eo-header {
+        align-items: flex-start;
+        flex-direction: column;
     }
 
     .eo-stats,
-    .eo-grid {
-        grid-template-columns:1fr;
+    .quick-grid,
+    .progress-grid,
+    .information-grid,
+    .sponsor-grid {
+        grid-template-columns: 1fr;
     }
 
-    .eo-event-row {
-        grid-template-columns:1fr;
+    .event-table {
+        overflow-x: auto;
+    }
+
+    .event-table-header,
+    .event-row {
+        min-width: 760px;
     }
 }
 
+.dashboard-intro {
+    margin-bottom: 14px;
+}
+
+.dashboard-intro h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 750;
+    color: #111827;
+}
+
+.dashboard-intro p {
+    margin: 5px 0 0;
+    color: #64748b;
+    font-size: 14px;
+}
+.eo-page > section:first-child {
+    margin-top: 0 !important;
+}
+
+.eo-page > section:first-child .section-heading {
+    margin-top: 0 !important;
+}
 </style>
 
 </x-layouts.eo>

@@ -539,24 +539,50 @@
 
 
             {{-- =================================
+            {{-- =================================
                  MENU SPONSORSHIP
             ================================== --}}
 
             @if($user?->divisi?->nama_divisi === 'Sponsorship')
 
-
                 <div class="menu-title">
-                    Divisi Sponsorship
+                    SPONSORSHIP
                 </div>
 
-
+                {{-- PAKET SPONSORSHIP --}}
                 <a
-                    href="{{ route('eo.sponsorship.index') }}"
-                    class="{{ request()->routeIs('eo.sponsorship.*') ? 'active' : '' }}"
+                    href="{{ route('eo.sponsorship.paket.index') }}"
+                    class="{{ request()->routeIs('eo.sponsorship.paket.*') ? 'active' : '' }}"
                 >
+                    <span class="menu-icon">PS</span>
+                    <span>Paket Sponsorship</span>
+                </a>
 
-                    Sponsorship
+                {{-- PENGAJUAN SPONSOR --}}
+                <a
+                    href="{{ route('eo.sponsorship.pengajuan.index') }}"
+                    class="{{ request()->routeIs('eo.sponsorship.pengajuan.*') ? 'active' : '' }}"
+                >
+                    <span class="menu-icon">PG</span>
+                    <span>Pengajuan Sponsor</span>
+                </a>
 
+                {{-- NEGOSIASI SPONSOR --}}
+                <a
+                    href="{{ route('eo.sponsorship.negosiasi.all') }}"
+                    class="{{ request()->routeIs('eo.sponsorship.negosiasi.*') ? 'active' : '' }}"
+                >
+                    <span class="menu-icon">NG</span>
+                    <span>Negosiasi</span>
+                </a>
+
+                {{-- DUKUNGAN SPONSOR --}}
+                <a
+                    href="{{ route('eo.sponsorship.dukungan.index') }}"
+                    class="{{ request()->routeIs('eo.sponsorship.dukungan.*') ? 'active' : '' }}"
+                >
+                    <span class="menu-icon">DS</span>
+                    <span>Dukungan Sponsor</span>
                 </a>
 
             @endif
@@ -665,7 +691,7 @@
 
                 @if($user?->divisi)
 
-                    Ãƒâ€šÃ‚Â· {{ $user->divisi->nama_divisi }}
+                    ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· {{ $user->divisi->nama_divisi }}
 
                 @endif
 
@@ -717,3 +743,4 @@
 </body>
 
 </html>
+

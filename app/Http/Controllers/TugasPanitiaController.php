@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Divisi;
 use App\Models\Event;
 use App\Models\EventPanitia;
 use App\Models\Panitia;
@@ -12,6 +11,10 @@ use Illuminate\Support\Str;
 
 class TugasPanitiaController extends Controller
 {
+    /**
+     * Daftar tugas untuk EO.
+     * EO hanya melihat dan memantau tugas.
+     */
     public function index()
     {
         $user = auth()->user();
@@ -21,88 +24,90 @@ class TugasPanitiaController extends Controller
             'eventPanitia.panitia',
             'eventPanitia.divisi',
         ])
-        ->latest()
-        ->get();
+            ->latest()
+            ->get();
 
-        return view(
-            'eo.panitia.tugas.index',
-            compact('user', 'tugas')
-        );
+        return view('eo.panitia.tugas.index', compact(
+            'user',
+            'tugas'
+        ));
     }
 
+    /**
+     * Form membuat tugas.
+     */
     public function create()
     {
         $user = auth()->user();
 
-        $events = Event::orderBy('nama_event')->get();
+        $events = Event::orderBy('tgl_mulai')->get();
 
-        $panitias = Panitia::orderBy('nama')->get();
+        $panitia = Panitia::with('event')
+            ->orderBy('nama')
+            ->get();
 
-        $divisis = Divisi::orderBy('nama_divisi')->get();
-
-        return view(
-            'eo.panitia.tugas.create',
-            compact(
-                'user',
-                'events',
-                'panitias',
-                'divisis'
-            )
-        );
+        return view('eo.panitia.tugas.create', compact(
+            'user',
+            'events',
+            'panitia'
+        ));
     }
 
+    /**
+     * Simpan tugas baru.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'event_id' => 'required|exists:events,id',
-            'panitia_id' => 'required|exists:panitias,id',
-            'divisi_id' => 'required|exists:divisis,id',
-            'judul_tugas' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'tanggal' => 'nullable|date',
-            'jam_mulai' => 'nullable',
-            'jam_selesai' => 'nullable',
-            'lokasi' => 'nullable|string|max:255',
+            'event_panitia_id' => [
+                'required',
+                'exists:event_panitias,id',
+            ],
+            'judul_tugas' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+            'deskripsi' => [
+                'nullable',
+                'string',
+            ],
+            'tanggal' => [
+                'required',
+                'date',
+            ],
+            'jam_mulai' => [
+                'nullable',
+                'date_format:H:i',
+            ],
+            'jam_selesai' => [
+                'nullable',
+                'date_format:H:i',
+            ],
+            'lokasi' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
         ]);
 
-        $eventPanitia = EventPanitia::firstOrCreate(
-            [
-                'event_id' => $validated['event_id'],
-                'panitia_id' => $validated['panitia_id'],
-            ],
-            [
-                'divisi_id' => $validated['divisi_id'],
-                'access_token' => Str::random(64),
-            ]
+        $eventPanitia = EventPanitia::findOrFail(
+            $validated['event_panitia_id']
         );
 
-        if (!$eventPanitia->access_token) {
-            $eventPanitia->update([
-                'access_token' => Str::random(64),
-            ]);
-        }
+        $validated['status'] = 'belum_dimulai';
+        $validated['token'] = Str::random(64);
 
-        $eventPanitia->update([
-            'divisi_id' => $validated['divisi_id'],
-        ]);
-
-        TugasPanitia::create([
-            'event_panitia_id' => $eventPanitia->id,
-            'judul_tugas' => $validated['judul_tugas'],
-            'deskripsi' => $validated['deskripsi'] ?? null,
-            'tanggal' => $validated['tanggal'] ?? null,
-            'jam_mulai' => $validated['jam_mulai'] ?? null,
-            'jam_selesai' => $validated['jam_selesai'] ?? null,
-            'lokasi' => $validated['lokasi'] ?? null,
-            'status' => 'belum_dimulai',
-            'token' => Str::random(64),
-        ]);
+        $tugas = TugasPanitia::create($validated);
 
         return redirect()
-            ->route('eo.panitia.tugas.index')
-            ->with('success', 'Tugas panitia berhasil dibuat.');
+            ->route('eo.panitia.tugas.show', $tugas)
+            ->with('success', 'Tugas berhasil dibuat dan diberikan kepada panitia.');
     }
 
+    /**
+     * Detail tugas untuk EO.
+     */
     public function show(TugasPanitia $tugasPanitia)
     {
         $user = auth()->user();
@@ -113,29 +118,26 @@ class TugasPanitiaController extends Controller
             'eventPanitia.divisi',
         ]);
 
-        return view(
-            'eo.panitia.tugas.show',
-            compact('user', 'tugasPanitia')
+        return view('eo.panitia.tugas.show', compact(
+            'user',
+            'tugasPanitia'
+        ));
+    }
+
+    /**
+     * EO TIDAK BOLEH mengubah status tugas.
+     */
+    public function updateStatus(Request $request, TugasPanitia $tugasPanitia)
+    {
+        abort(
+            403,
+            'EO tidak diperbolehkan mengubah status tugas. Status hanya dapat diperbarui oleh panitia yang ditugaskan.'
         );
     }
 
-    public function updateStatus(
-        Request $request,
-        TugasPanitia $tugasPanitia
-    ) {
-        $validated = $request->validate([
-            'status' => 'required|in:belum_dimulai,sedang_dikerjakan,selesai',
-            'catatan_panitia' => 'nullable|string',
-        ]);
-
-        $tugasPanitia->update($validated);
-
-        return back()->with(
-            'success',
-            'Status tugas berhasil diperbarui.'
-        );
-    }
-
+    /**
+     * Hapus tugas.
+     */
     public function destroy(TugasPanitia $tugasPanitia)
     {
         $tugasPanitia->delete();
@@ -145,24 +147,118 @@ class TugasPanitiaController extends Controller
             ->with('success', 'Tugas berhasil dihapus.');
     }
 
-    public function publicPanitiaTasks(EventPanitia $eventPanitia)
+    /**
+     * Halaman tugas milik panitia.
+     */
+    public function panitiaTask(TugasPanitia $tugasPanitia)
     {
-        $eventPanitia->load([
-            'event',
-            'panitia',
-            'divisi',
-            'tugas',
+        $user = auth()->user();
+
+        if (strtoupper((string) $user->role) !== 'PANITIA') {
+            abort(403, 'Akses hanya untuk Panitia.');
+        }
+
+        if (!$user->panitia_id) {
+            abort(403, 'Akun belum terhubung dengan data Panitia.');
+        }
+
+        $tugasPanitia->load([
+            'eventPanitia.event',
+            'eventPanitia.panitia',
+            'eventPanitia.divisi',
         ]);
 
-        $tugas = $eventPanitia->tugas()
-            ->latest()
-            ->get();
+        if (
+            !$tugasPanitia->eventPanitia ||
+            $tugasPanitia->eventPanitia->panitia_id !== $user->panitia_id
+        ) {
+            abort(403, 'Anda tidak memiliki akses ke tugas ini.');
+        }
 
-        return view(
-            'panitia.tugas-panitia',
-            compact('eventPanitia', 'tugas')
+        return view('panitia.tugas.show', compact(
+            'user',
+            'tugasPanitia'
+        ));
+    }
+
+    /**
+     * Panitia mengubah status tugas miliknya sendiri.
+     *
+     * Status harus berurutan:
+     * belum_dimulai
+     *      ?
+     * sedang_dikerjakan
+     *      ?
+     * selesai
+     */
+    public function panitiaUpdateStatus(
+        Request $request,
+        TugasPanitia $tugasPanitia
+    ) {
+        $user = auth()->user();
+
+        if (strtoupper((string) $user->role) !== 'PANITIA') {
+            abort(403, 'Akses hanya untuk Panitia.');
+        }
+
+        if (!$user->panitia_id) {
+            abort(403, 'Akun belum terhubung dengan data Panitia.');
+        }
+
+        $tugasPanitia->load('eventPanitia');
+
+        if (
+            !$tugasPanitia->eventPanitia ||
+            $tugasPanitia->eventPanitia->panitia_id !== $user->panitia_id
+        ) {
+            abort(403, 'Anda tidak memiliki akses untuk mengubah tugas ini.');
+        }
+
+        $validated = $request->validate([
+            'status' => [
+                'required',
+                'in:belum_dimulai,sedang_dikerjakan,selesai',
+            ],
+            'catatan_panitia' => [
+                'nullable',
+                'string',
+            ],
+        ]);
+
+        $current = $tugasPanitia->status;
+        $next = $validated['status'];
+
+        $allowed = [
+            'belum_dimulai' => ['belum_dimulai', 'sedang_dikerjakan'],
+            'sedang_dikerjakan' => ['sedang_dikerjakan', 'selesai'],
+            'selesai' => ['selesai'],
+        ];
+
+        if (!in_array($next, $allowed[$current] ?? [], true)) {
+            return back()
+                ->withErrors([
+                    'status' => 'Status tugas harus dilakukan secara berurutan.',
+                ])
+                ->withInput();
+        }
+
+        $tugasPanitia->update([
+            'status' => $next,
+            'catatan_panitia' => $validated['catatan_panitia'] ?? null,
+        ]);
+
+        return back()->with(
+            'success',
+            'Status tugas berhasil diperbarui.'
         );
     }
+
+    /**
+     * Halaman tugas dari QR Code.
+     *
+     * QR hanya membuka informasi tugas.
+     * QR tidak memberikan hak untuk mengubah data.
+     */
     public function publicTask(string $token)
     {
         $tugasPanitia = TugasPanitia::with([
@@ -170,34 +266,41 @@ class TugasPanitiaController extends Controller
             'eventPanitia.panitia',
             'eventPanitia.divisi',
         ])
-        ->where('token', $token)
-        ->firstOrFail();
+            ->where('token', $token)
+            ->firstOrFail();
 
-        return redirect()->route(
-            'panitia.tugas.panitia',
-            $tugasPanitia->eventPanitia
-        );
+        return view('tugas.public', compact(
+            'tugasPanitia'
+        ));
     }
 
-    public function publicUpdate(
-        Request $request,
-        string $token
-    ) {
-        $validated = $request->validate([
-            'status' => 'required|in:belum_dimulai,sedang_dikerjakan,selesai',
-            'catatan_panitia' => 'nullable|string',
+    /**
+     * Halaman daftar tugas dari QR event/panitia.
+     * Bersifat read-only.
+     */
+    public function publicPanitiaTasks(EventPanitia $eventPanitia)
+    {
+        $eventPanitia->load([
+            'event',
+            'panitia',
+            'divisi',
+            'tugasPanitia',
         ]);
 
-        $tugasPanitia = TugasPanitia::where(
-            'token',
-            $token
-        )->firstOrFail();
+        return view('tugas.panitia', compact(
+            'eventPanitia'
+        ));
+    }
 
-        $tugasPanitia->update($validated);
-
-        return back()->with(
-            'success',
-            'Status tugas berhasil diperbarui.'
+    /**
+     * Sengaja tidak menyediakan update melalui QR publik.
+     */
+    public function publicUpdate()
+    {
+        abort(
+            403,
+            'Perubahan status tidak dapat dilakukan melalui QR publik.'
         );
     }
 }
+

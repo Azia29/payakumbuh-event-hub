@@ -321,7 +321,11 @@
 
                                 <div class="actions">
 
-                                    <a href="{{ route('eo.panitia.edit', $item) }}"
+                                    <a href="{{ route('eo.panitia.qr', ['panitia' => $item->id]) }}"
+   style="display:inline-flex;align-items:center;justify-content:center;padding:7px 12px;border-radius:8px;background:#ecfdf5;color:#047857;text-decoration:none;font-size:12px;font-weight:700;">
+    QR
+</a>
+<a href="{{ route('eo.panitia.edit', $item) }}"
                                        class="btn-edit">
                                         Edit
                                     </a>

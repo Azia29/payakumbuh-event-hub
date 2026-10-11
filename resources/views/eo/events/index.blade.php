@@ -1,4 +1,4 @@
-﻿<x-layouts.eo :user="$user" title="Kelola Event">
+<x-layouts.eo :user="$user" title="Kelola Event">
 
 <style>
     .event-page {
@@ -245,6 +245,16 @@
     .status-rejected {
         background: #fee2e2;
         color: #b91c1c;
+    }
+
+        .action-submit {
+        color: #15803d;
+    }
+
+    .action-submit:hover {
+        background: #f0fdf4;
+        border-color: #86efac;
+        color: #166534;
     }
 
     .status-draft {
@@ -503,6 +513,7 @@
                 <select id="statusFilter" class="filter-select">
                     <option value="">Semua Status</option>
                     <option value="draft">Draft</option>
+                    <option value="menunggu">Menunggu Verifikasi</option>
                     <option value="aktif">Aktif</option>
                     <option value="berlangsung">Berlangsung</option>
                     <option value="disetujui">Disetujui</option>
@@ -514,6 +525,14 @@
 
         </div>
 
+
+        @if(session('success'))
+            <div style="margin:16px;padding:13px 16px;border-radius:11px;border:1px solid #bbf7d0;background:#f0fdf4;color:#166534;font-size:12px;font-weight:600;">{{ session('success') }}</div>
+        @endif
+
+        @if(session('error'))
+            <div style="margin:16px;padding:13px 16px;border-radius:11px;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;font-size:12px;font-weight:600;">{{ session('error') }}</div>
+        @endif
 
         @if($eventCollection->count() > 0)
 
@@ -597,7 +616,7 @@
                                 <td>
                                     <span class="status {{ $statusClass }}">
                                         <span class="status-dot"></span>
-                                        {{ ucfirst($status) }}
+                                        {{ $status === 'menunggu' ? 'Menunggu Verifikasi' : ucfirst($status) }}
                                     </span>
                                 </td>
 
@@ -613,7 +632,9 @@
                                             Detail
                                         </a>
 
-                                        <a
+                                        @if(in_array($status, ['draft', 'ditolak']))
+
+<a
                                             href="{{ route('eo.events.edit', $event) }}"
                                             class="action-btn action-edit"
                                             title="Edit event"
@@ -638,6 +659,42 @@
                                                 Hapus
                                             </button>
                                         </form>
+
+                                        @endif
+
+                                        @if(in_array($status, ['draft', 'ditolak']))
+
+                                            <form
+                                                action="{{ route('eo.events.ajukan', $event) }}"
+                                                method="POST"
+                                                style="display:inline;"
+                                                onsubmit="return confirm('Ajukan event ini ke admin untuk dipublikasi?');"
+                                            >
+                                                @csrf
+                                                @method('PATCH')
+
+                                                <button type="submit" class="action-btn action-submit" title="Ajukan ke admin">
+                                                    Ajukan
+                                                </button>
+                                            </form>
+
+                                        @elseif($status === 'menunggu')
+
+                                            <form
+                                                action="{{ route('eo.events.batalkan', $event) }}"
+                                                method="POST"
+                                                style="display:inline;"
+                                                onsubmit="return confirm('Batalkan pengajuan event ini?');"
+                                            >
+                                                @csrf
+                                                @method('PATCH')
+
+                                                <button type="submit" class="action-btn" title="Batalkan pengajuan">
+                                                    Batalkan
+                                                </button>
+                                            </form>
+
+                                        @endif
 
                                     </div>
 

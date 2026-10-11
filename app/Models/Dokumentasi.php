@@ -17,11 +17,20 @@ class Dokumentasi extends Model
         'tanggal',
         'keterangan',
         'file',
+        'status',
+        'published_at',
+        'published_by',
     ];
 
     protected $casts = [
         'tanggal' => 'date',
+        'published_at' => 'datetime',
     ];
+
+    public function scopeDipublikasi($query)
+    {
+        return $query->where('status', 'dipublikasi');
+    }
 
     public function event(): BelongsTo
     {

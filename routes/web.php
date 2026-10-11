@@ -18,12 +18,15 @@ use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\PublikasiController;
 use App\Http\Controllers\HumasController;
 use App\Http\Controllers\TugasPanitiaController;
+use App\Http\Controllers\PanitiaDashboardController;
 
 use App\Http\Controllers\SponsorController;
 use App\Http\Controllers\PaketSponsorshipController;
 use App\Http\Controllers\PengajuanSponsorController;
 use App\Http\Controllers\NegosiasiSponsorController;
 use App\Http\Controllers\DukunganSponsorController;
+use App\Http\Controllers\SponsorAuthController;
+use App\Http\Controllers\SponsorDashboardController;
 
 use App\Http\Controllers\AdminPublikasiController;
 use App\Http\Middleware\EoMiddleware;
@@ -39,9 +42,51 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
-Route::view('/tentang', 'tentang')->name('tentang');
+Route::view('/tentang', 'tentang')
+    ->name('tentang');
 
-Route::view('/kontak', 'kontak')->name('kontak');
+Route::view('/kontak', 'kontak')
+    ->name('kontak');
+
+
+/*
+|--------------------------------------------------------------------------
+| PUBLIC EVENT
+|--------------------------------------------------------------------------
+*/
+
+
+/*
+|--------------------------------------------------------------------------
+| SPONSOR AUTHENTICATION
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/sponsor/login',
+    [SponsorAuthController::class, 'showLogin']
+)->name('sponsor.login');
+
+Route::post(
+    '/sponsor/login',
+    [SponsorAuthController::class, 'login']
+)->name('sponsor.login.process');
+
+Route::middleware('auth:sponsor')
+    ->prefix('sponsor')
+    ->name('sponsor.')
+    ->group(function () {
+
+        Route::get(
+            '/dashboard',
+            [SponsorDashboardController::class, 'index']
+        )->name('dashboard');
+
+        Route::post(
+            '/logout',
+            [SponsorAuthController::class, 'logout']
+        )->name('logout');
+    });
 
 Route::get('/event', [EventController::class, 'publicIndex'])
     ->name('event.public');
@@ -71,6 +116,10 @@ Route::post('/logout', [AuthController::class, 'logout'])
 |--------------------------------------------------------------------------
 | EO - SINGLE ACCOUNT
 |--------------------------------------------------------------------------
+|
+| Semua fitur EO berada dalam satu akun.
+| Divisi menentukan dashboard/tampilan yang digunakan.
+|
 */
 
 Route::middleware(['auth', EoMiddleware::class])
@@ -79,105 +128,210 @@ Route::middleware(['auth', EoMiddleware::class])
     ->group(function () {
 
         /*
+        |--------------------------------------------------------------------------
         | Dashboard
+        |--------------------------------------------------------------------------
         */
-        Route::get('/dashboard', [EoDashboardController::class, 'index'])
-            ->name('dashboard');
+
+        Route::get(
+            '/dashboard',
+            [EoDashboardController::class, 'index']
+        )->name('dashboard');
 
 
         /*
-        | Event
+        |--------------------------------------------------------------------------
+        | EVENT
+        |--------------------------------------------------------------------------
         */
-        Route::resource('/events', EventController::class)
-            ->names('events');
+
+        Route::resource(
+            '/events',
+            EventController::class
+        )->names('events');
+
+        Route::patch('/events/{event}/ajukan', [EventController::class, 'ajukan'])->name('events.ajukan');
+        Route::patch('/events/{event}/batalkan', [EventController::class, 'batalkanPengajuan'])->name('events.batalkan');
 
 
         /*
-        | Rundown
+        |--------------------------------------------------------------------------
+        | RUNDOWN
+        |--------------------------------------------------------------------------
         */
-        Route::resource('/rundown', RundownController::class)
-            ->names('rundown');
+
+        Route::resource(
+            '/rundown',
+            RundownController::class
+        )->names('rundown');
 
 
         /*
-        | Jadwal
+        |--------------------------------------------------------------------------
+        | JADWAL
+        |--------------------------------------------------------------------------
         */
-        Route::resource('/jadwal', JadwalController::class)
-            ->names('jadwal');
+
+        Route::resource(
+            '/jadwal',
+            JadwalController::class
+        )->names('jadwal');
 
 
         /*
-        | Kegiatan
+        |--------------------------------------------------------------------------
+        | KEGIATAN
+        |--------------------------------------------------------------------------
         */
-        Route::resource('/kegiatan', KegiatanController::class)
-            ->names('kegiatan');
+
+        Route::resource(
+            '/kegiatan',
+            KegiatanController::class
+        )->names('kegiatan');
 
 
         /*
-        | Perlengkapan
+        |--------------------------------------------------------------------------
+        | PERLENGKAPAN
+        |--------------------------------------------------------------------------
         */
-        Route::resource('/perlengkapan', PerlengkapanController::class)
-            ->names('perlengkapan');
+
+        Route::resource(
+            '/perlengkapan',
+            PerlengkapanController::class
+        )->names('perlengkapan');
 
 
         /*
-        | Panitia
+        |--------------------------------------------------------------------------
+        | PANITIA
+        |--------------------------------------------------------------------------
         */
-        Route::resource('/panitia', PanitiaController::class)
+
+        Route::resource(
+            '/panitia',
+            PanitiaController::class
+        )
             ->names('panitia')
-            ->whereNumber('panitium');
+            ->parameters([
+                'panitia' => 'panitia'
+            ])
+            ->whereNumber('panitia');
+
+
         /*
-        | Pembagian Tugas Panitia
+        |--------------------------------------------------------------------------
+        | QR PANITIA
+        |--------------------------------------------------------------------------
+        |
+        | EO dapat melihat QR milik satu Panitia.
+        |
+        | Contoh:
+        | /eo/panitia/2/qr
+        |
         */
+
+        Route::get(
+            '/panitia/{panitia}/qr',
+            [PanitiaController::class, 'qr']
+        )->name('panitia.qr');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PEMBAGIAN TUGAS PANITIA
+        |--------------------------------------------------------------------------
+        |
+        | EO membuat dan mengelola tugas.
+        |
+        | EO TIDAK mengubah status tugas.
+        | Status diperbarui melalui halaman QR Panitia.
+        |
+        */
+
         Route::prefix('/panitia/tugas')
             ->name('panitia.tugas.')
             ->group(function () {
-                Route::get('/', [TugasPanitiaController::class, 'index'])
-                    ->name('index');
 
-                Route::get('/create', [TugasPanitiaController::class, 'create'])
-                    ->name('create');
+                Route::get(
+                    '/',
+                    [TugasPanitiaController::class, 'index']
+                )->name('index');
 
-                Route::post('/', [TugasPanitiaController::class, 'store'])
-                    ->name('store');
+                Route::get(
+                    '/create',
+                    [TugasPanitiaController::class, 'create']
+                )->name('create');
 
-                Route::get('/{tugasPanitia}', [TugasPanitiaController::class, 'show'])
-                    ->name('show');
+                Route::post(
+                    '/',
+                    [TugasPanitiaController::class, 'store']
+                )->name('store');
 
-                Route::put('/{tugasPanitia}/status', [TugasPanitiaController::class, 'updateStatus'])
-                    ->name('update-status');
+                Route::get(
+                    '/{tugasPanitia}',
+                    [TugasPanitiaController::class, 'show']
+                )->name('show');
 
-                Route::delete('/{tugasPanitia}', [TugasPanitiaController::class, 'destroy'])
-                    ->name('destroy');
+                Route::delete(
+                    '/{tugasPanitia}',
+                    [TugasPanitiaController::class, 'destroy']
+                )->name('destroy');
+
             });
 
 
         /*
-        | Dokumentasi
+        |--------------------------------------------------------------------------
+        | DOKUMENTASI
+        |--------------------------------------------------------------------------
         */
-        Route::resource('/dokumentasi', DokumentasiController::class)
-            ->names('dokumentasi');
+
+        Route::resource(
+            '/dokumentasi',
+            DokumentasiController::class
+        )->names('dokumentasi');
+
+        Route::get('/galeri', [DokumentasiController::class, 'galeri'])->name('galeri.index');
+
+        Route::patch('/dokumentasi/{dokumentasi}/ajukan', [DokumentasiController::class, 'ajukan'])->name('dokumentasi.ajukan');
+        Route::patch('/dokumentasi/{dokumentasi}/batalkan', [DokumentasiController::class, 'batalkanPengajuan'])->name('dokumentasi.batalkan');
 
 
         /*
-        | Monitoring
+        |--------------------------------------------------------------------------
+        | MONITORING
+        |--------------------------------------------------------------------------
         */
-        Route::get('/monitoring', [MonitoringController::class, 'index'])
-            ->name('monitoring');
+
+        Route::get(
+            '/monitoring',
+            [MonitoringController::class, 'index']
+        )->name('monitoring');
 
 
         /*
-        | Laporan
+        |--------------------------------------------------------------------------
+        | LAPORAN
+        |--------------------------------------------------------------------------
         */
-        Route::get('/laporan', [LaporanController::class, 'index'])
-            ->name('laporan');
+
+        Route::get(
+            '/laporan',
+            [LaporanController::class, 'index']
+        )->name('laporan');
 
 
         /*
-        | Pengumuman
+        |--------------------------------------------------------------------------
+        | PENGUMUMAN
+        |--------------------------------------------------------------------------
         */
-        Route::resource('/pengumuman', PengumumanController::class)
-            ->names('pengumuman');
+
+        Route::resource(
+            '/pengumuman',
+            PengumumanController::class
+        )->names('pengumuman');
 
         Route::post(
             '/pengumuman/{pengumuman}/ajukan',
@@ -186,10 +340,15 @@ Route::middleware(['auth', EoMiddleware::class])
 
 
         /*
-        | Publikasi
+        |--------------------------------------------------------------------------
+        | PUBLIKASI
+        |--------------------------------------------------------------------------
         */
-        Route::resource('/publikasi', PublikasiController::class)
-            ->names('publikasi');
+
+        Route::resource(
+            '/publikasi',
+            PublikasiController::class
+        )->names('publikasi');
 
         Route::post(
             '/publikasi/{publikasi}/ajukan',
@@ -198,8 +357,11 @@ Route::middleware(['auth', EoMiddleware::class])
 
 
         /*
-        | Humas
+        |--------------------------------------------------------------------------
+        | HUMAS
+        |--------------------------------------------------------------------------
         */
+
         Route::get(
             '/kontak-komunikasi',
             [HumasController::class, 'kontakKomunikasi']
@@ -227,10 +389,20 @@ Route::middleware(['auth', EoMiddleware::class])
 
 
         /*
-        | Sponsorship
+        |--------------------------------------------------------------------------
+        | SPONSORSHIP
+        |--------------------------------------------------------------------------
         */
 
-        // Paket Sponsorship
+
+        /*
+        |--------------------------------------------------------------------------
+        | Paket Sponsorship
+        |--------------------------------------------------------------------------
+        */
+
+        Route::middleware('divisi:Sponsorship,Ketua')->group(function () {
+
         Route::get(
             '/sponsorship/paket',
             [PaketSponsorshipController::class, 'index']
@@ -267,7 +439,12 @@ Route::middleware(['auth', EoMiddleware::class])
         )->name('sponsorship.paket.destroy');
 
 
-        // Pengajuan Sponsor
+        /*
+        |--------------------------------------------------------------------------
+        | Pengajuan Sponsor
+        |--------------------------------------------------------------------------
+        */
+
         Route::get(
             '/sponsorship/pengajuan',
             [PengajuanSponsorController::class, 'index']
@@ -284,7 +461,27 @@ Route::middleware(['auth', EoMiddleware::class])
         )->name('sponsorship.pengajuan.status');
 
 
-        // Negosiasi
+        /*
+        |--------------------------------------------------------------------------
+        | Daftar Negosiasi Sponsor
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/sponsorship/negosiasi',
+            [NegosiasiSponsorController::class, 'all']
+        )->name('sponsorship.negosiasi.all');
+
+
+        
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Negosiasi Sponsor
+        |--------------------------------------------------------------------------
+        */
+
         Route::get(
             '/sponsorship/pengajuan/{pengajuanSponsor}/negosiasi',
             [NegosiasiSponsorController::class, 'index']
@@ -296,7 +493,12 @@ Route::middleware(['auth', EoMiddleware::class])
         )->name('sponsorship.negosiasi.store');
 
 
-        // Dukungan Sponsor
+        /*
+        |--------------------------------------------------------------------------
+        | Dukungan Sponsor
+        |--------------------------------------------------------------------------
+        */
+
         Route::get(
             '/sponsorship/dukungan',
             [DukunganSponsorController::class, 'index']
@@ -308,9 +510,14 @@ Route::middleware(['auth', EoMiddleware::class])
         )->name('sponsorship.dukungan.store');
 
 
+        });
+
         /*
-        | Profil
+        |--------------------------------------------------------------------------
+        | PROFIL
+        |--------------------------------------------------------------------------
         */
+
         Route::get(
             '/profil',
             [ProfilController::class, 'index']
@@ -331,23 +538,160 @@ Route::middleware(['auth', EoMiddleware::class])
 
 /*
 |--------------------------------------------------------------------------
-| TUGAS PANITIA - PUBLIC QR
+| PANITIA LOGIN
 |--------------------------------------------------------------------------
+|
+| Bagian ini masih dipertahankan dari sistem lama.
+|
+| Untuk konsep terbaru:
+| Panitia TIDAK perlu login.
+| Akses tugas menggunakan QR.
+|
+| Route ini tidak digunakan untuk alur QR.
+|
+*/
+
+Route::middleware('auth')->group(function () {
+
+    Route::get(
+        '/panitia/dashboard',
+        [PanitiaDashboardController::class, 'index']
+    )->name('panitia.dashboard');
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| TUGAS PANITIA - PUBLIC
+|--------------------------------------------------------------------------
+|
+| Route di bawah TIDAK menggunakan middleware auth.
+|
+| Panitia dapat mengakses tugas menggunakan QR.
+|
+*/
+
+
+/*
+|--------------------------------------------------------------------------
+| PUBLIC - Tugas berdasarkan EventPanitia
+|--------------------------------------------------------------------------
+|
+| Route lama tetap dipertahankan.
+|
 */
 
 Route::get(
     '/tugas-panitia/{eventPanitia}',
     [TugasPanitiaController::class, 'publicPanitiaTasks']
 )->name('panitia.tugas.panitia');
+
+
+/*
+|--------------------------------------------------------------------------
+| PUBLIC - Satu Tugas berdasarkan Token
+|--------------------------------------------------------------------------
+|
+| Route lama tetap dipertahankan.
+|
+*/
+
 Route::get(
     '/tugas/{token}',
     [TugasPanitiaController::class, 'publicTask']
 )->name('panitia.tugas.public');
 
+
+/*
+|--------------------------------------------------------------------------
+| PUBLIC - QR PANITIA
+|--------------------------------------------------------------------------
+|
+| Ini adalah route utama konsep:
+|
+| 1 Panitia
+|      Ã¢â€ â€œ
+| 1 QR
+|      Ã¢â€ â€œ
+| Banyak Tugas
+|
+| Contoh:
+|
+| /panitia/qr/xxxxxxxxxxxxxxxx
+|
+| Tidak membutuhkan login.
+|
+*/
+
+Route::get(
+    '/panitia/qr/{token}',
+    [TugasPanitiaController::class, 'publicPanitiaByToken']
+)->name('panitia.qr');
+
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN PUBLIKASI
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/admin/publikasi',
+    [AdminPublikasiController::class, 'index']
+)->name('admin.publikasi.index');
+/*
+|--------------------------------------------------------------------------
+| PUBLIC - QR PANITIA
+|--------------------------------------------------------------------------
+|
+| Ini adalah route utama konsep:
+|
+| 1 Panitia
+|      Ã¢â€ â€œ
+| 1 QR
+|      Ã¢â€ â€œ
+| Banyak Tugas
+|
+| Contoh:
+|
+| /panitia/qr/xxxxxxxxxxxxxxxx
+|
+| Tidak membutuhkan login.
+|
+*/
+
+Route::get(
+    '/panitia/qr/{token}',
+    [TugasPanitiaController::class, 'publicPanitiaByToken']
+)->name('panitia.qr');
+
+
+/*
+|--------------------------------------------------------------------------
+| PUBLIC - UPDATE STATUS TUGAS MELALUI QR
+|--------------------------------------------------------------------------
+|
+| Panitia menggunakan QR yang sama untuk memperbarui status
+| tugas yang memang dimiliki oleh Panitia tersebut.
+|
+| Alur:
+|
+| BELUM DIMULAI
+|       Ã¢â€ â€œ
+| SEDANG DIKERJAKAN
+|       Ã¢â€ â€œ
+| SELESAI
+|
+| EO tidak menggunakan route ini.
+|
+*/
+
 Route::put(
-    '/tugas/{token}',
-    [TugasPanitiaController::class, 'publicUpdate']
-)->name('panitia.tugas.public.update');
+    '/panitia/qr/{token}/tugas/{tugasPanitia}/status',
+    [TugasPanitiaController::class, 'publicUpdateStatusByQr']
+)->name('panitia.qr.tugas.status');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -360,17 +704,3 @@ Route::get(
     [AdminPublikasiController::class, 'index']
 )->name('admin.publikasi.index');
 
-Route::get(
-    '/admin/publikasi/{publikasi}',
-    [AdminPublikasiController::class, 'show']
-)->name('admin.publikasi.show');
-
-Route::post(
-    '/admin/publikasi/{publikasi}/setujui',
-    [AdminPublikasiController::class, 'setujui']
-)->name('admin.publikasi.setujui');
-
-Route::post(
-    '/admin/publikasi/{publikasi}/tolak',
-    [AdminPublikasiController::class, 'tolak']
-)->name('admin.publikasi.tolak');

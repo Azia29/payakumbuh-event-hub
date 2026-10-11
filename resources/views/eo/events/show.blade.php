@@ -476,7 +476,7 @@
 
                     <div class="status-badge">
                         <span class="status-dot"></span>
-                        {{ ucfirst($event->status ?? 'Draft') }}
+                        {{ strtolower($event->status ?? 'draft') === 'menunggu' ? 'Menunggu Verifikasi' : ucfirst($event->status ?? 'Draft') }}
                     </div>
                 </div>
 
@@ -710,7 +710,7 @@
                         </div>
 
                         <div class="summary-value">
-                            {{ ucfirst($event->status ?? 'Draft') }}
+                            {{ strtolower($event->status ?? 'draft') === 'menunggu' ? 'Menunggu Verifikasi' : ucfirst($event->status ?? 'Draft') }}
                         </div>
 
                     </div>

@@ -28,6 +28,8 @@ class Event extends Model
         return [
             'harga_tiket' => 'decimal:2',
             'kuota_tiket' => 'integer',
+            'tgl_mulai' => 'datetime',
+            'tgl_selesai' => 'datetime',
         ];
     }
 

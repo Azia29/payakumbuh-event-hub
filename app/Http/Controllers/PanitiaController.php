@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\Panitia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class PanitiaController extends Controller
 {
@@ -43,16 +44,18 @@ class PanitiaController extends Controller
             'no_hp' => ['nullable', 'string', 'max:30'],
             'divisi' => [
                 'required',
-                'in:Ketua,Acara,Humas,Sponsorship,Dokumentasi'
+                'in:Acara,Humas,Sponsorship,Dokumentasi'
             ],
             'keterangan' => ['nullable', 'string'],
         ]);
+
+        $validated['qr_token'] = Str::random(64);
 
         Panitia::create($validated);
 
         return redirect()
             ->route('eo.panitia.index')
-            ->with('success', 'Data panitia berhasil ditambahkan.');
+            ->with('success', 'Data panitia berhasil ditambahkan. QR Panitia otomatis dibuat.');
     }
 
     public function edit(Panitia $panitia)
@@ -76,7 +79,7 @@ class PanitiaController extends Controller
             'no_hp' => ['nullable', 'string', 'max:30'],
             'divisi' => [
                 'required',
-                'in:Ketua,Acara,Humas,Sponsorship,Dokumentasi'
+                'in:Acara,Humas,Sponsorship,Dokumentasi'
             ],
             'keterangan' => ['nullable', 'string'],
         ]);
@@ -95,5 +98,15 @@ class PanitiaController extends Controller
         return redirect()
             ->route('eo.panitia.index')
             ->with('success', 'Data panitia berhasil dihapus.');
+    }
+
+    public function qr(Panitia $panitia)
+    {
+        $user = Auth::user();
+
+        return view('eo.panitia.qr', compact(
+            'user',
+            'panitia'
+        ));
     }
 }

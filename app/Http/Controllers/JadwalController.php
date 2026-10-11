@@ -57,6 +57,17 @@ class JadwalController extends Controller
             ->with('success', 'Jadwal berhasil ditambahkan.');
     }
 
+    public function show(Jadwal $jadwal)
+    {
+        $user = Auth::user();
+
+        $jadwal->load('event');
+
+        return view('eo.jadwal.show', compact(
+            'user',
+            'jadwal'
+        ));
+    }
     public function edit(Jadwal $jadwal)
     {
         $user = Auth::user();

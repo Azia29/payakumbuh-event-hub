@@ -14,7 +14,7 @@ class PengajuanSponsorController extends Controller
         $pengajuans = PengajuanSponsor::with([
             'sponsor',
             'paket.event',
-            'negosiasi',
+            'negosiasi.user',
             'dukungan',
         ])
         ->latest()

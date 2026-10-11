@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User extends Authenticatable
 {
@@ -21,6 +22,7 @@ class User extends Authenticatable
         'foto',
         'role',
         'divisi_id',
+        'panitia_id',
     ];
 
     protected $hidden = [
@@ -40,5 +42,10 @@ class User extends Authenticatable
     public function divisi()
     {
         return $this->belongsTo(Divisi::class);
+    }
+
+    public function panitia(): BelongsTo
+    {
+        return $this->belongsTo(Panitia::class);
     }
 }

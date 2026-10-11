@@ -179,7 +179,7 @@
 
     <div class="event-header">
 
-        <h1>Edit Event</h1>
+
 
         <p>
             Perbarui informasi event dan lokasi kegiatan.

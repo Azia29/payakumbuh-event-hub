@@ -25,3 +25,18 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# File cadangan
+*.bak
+*.bak-*
+*.backup
+*.backup-*
+*.backup.php
+*.backup.blade.php
+*_backup.blade.php
+
+# Alat lokal (bukan bagian aplikasi)
+.mcp.json
+.claude/
+.agents/
+boost.json
