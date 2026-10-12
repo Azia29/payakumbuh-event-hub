@@ -706,3 +706,12 @@ Route::get(
     [AdminPublikasiController::class, 'index']
 )->name('admin.publikasi.index');
 
+
+
+// ===== Keuangan =====
+Route::middleware('auth')->prefix('keuangan')->name('keuangan.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\KeuanganController::class, 'index'])->name('index');
+    Route::get('/create', [\App\Http\Controllers\KeuanganController::class, 'create'])->name('create');
+    Route::post('/', [\App\Http\Controllers\KeuanganController::class, 'store'])->name('store');
+    Route::delete('/{transaksi}', [\App\Http\Controllers\KeuanganController::class, 'destroy'])->name('destroy');
+});

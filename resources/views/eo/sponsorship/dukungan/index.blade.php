@@ -814,28 +814,13 @@
                 </div>
 
 
-                <select
-                    id="filterPembayaran"
-                    class="status-filter"
-                >
-
-                    <option value="">
-                        Semua Pembayaran
-                    </option>
-
-                    <option value="belum bayar">
-                        Belum Dibayar
-                    </option>
-
-                    <option value="sebagian dibayar">
-                        Sebagian Dibayar
-                    </option>
-
-                    <option value="sudah dibayar">
-                        Sudah Dibayar
-                    </option>
-
-                </select>
+                <select id="filterPembayaran" class="status-filter">
+    <option value="">Semua Pembayaran</option>
+    <option value="belum dibayar">Belum Dibayar</option>
+    <option value="menunggu verifikasi">Menunggu Verifikasi</option>
+    <option value="sudah dibayar">Sudah Dibayar</option>
+    <option value="ditolak">Ditolak</option>
+</select>
 
             </div>
 
@@ -894,16 +879,19 @@
 
                             $paymentLabel = match($paymentStatus) {
 
-                                'dibayar', 'lunas'
-                                    => 'Sudah Dibayar',
+    'dibayar', 'lunas'
+        => 'Sudah Dibayar',
 
-                                'sebagian'
-                                    => 'Sebagian Dibayar',
+    'menunggu_verifikasi'
+        => 'Menunggu Verifikasi',
 
-                                default
-                                    => 'Belum Dibayar',
+    'ditolak'
+        => 'Ditolak',
 
-                            };
+    default
+        => 'Belum Dibayar',
+
+};
 
                             $sponsorName =
                                 $dukungan->pengajuan?->sponsor?->nama_perusahaan
@@ -939,7 +927,7 @@
                                 $eventName . ' ' .
                                 $packageName
                             ) }}"
-                            data-payment="{{ strtolower($paymentLabel) }}"
+                            data-payment="{{ match($paymentStatus) { 'dibayar', 'lunas' => 'sudah dibayar', 'menunggu_verifikasi' => 'menunggu verifikasi', 'ditolak' => 'ditolak', default => 'belum dibayar' } }}"
                         >
 
 
