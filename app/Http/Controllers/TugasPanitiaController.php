@@ -327,6 +327,49 @@ class TugasPanitiaController extends Controller
      * Perubahan status hanya lewat login panitia.
      */
     public function publicUpdateStatusByQr(string $token, TugasPanitia $tugasPanitia)
-    {
-        abort(403, 'Perubahan status tidak dapat dilakukan melalui QR.');
-    }}
+{
+    $panitia = Panitia::where('qr_token', $token)->firstOrFail();
+
+    $tugasPanitia->load('eventPanitia');
+
+    if (
+        !$tugasPanitia->eventPanitia ||
+        (int) $tugasPanitia->eventPanitia->panitia_id !== (int) $panitia->id
+    ) {
+        abort(403, 'Tugas ini bukan milik panitia pada QR tersebut.');
+    }
+
+    $validated = request()->validate([
+        'status' => [
+            'required',
+            'in:belum_dimulai,sedang_dikerjakan,selesai',
+        ],
+        'catatan_panitia' => ['nullable', 'string', 'max:2000'],
+    ]);
+
+    $current = $tugasPanitia->status ?? 'belum_dimulai';
+    $next = $validated['status'];
+
+    $allowed = [
+        'belum_dimulai' => ['belum_dimulai', 'sedang_dikerjakan'],
+        'sedang_dikerjakan' => ['sedang_dikerjakan', 'selesai'],
+        'selesai' => ['selesai'],
+    ];
+
+    if (!in_array($next, $allowed[$current] ?? [], true)) {
+        return back()
+            ->withErrors([
+                'status' => 'Status harus diperbarui secara berurutan.',
+            ])
+            ->withInput();
+    }
+
+    $tugasPanitia->status = $next;
+    $tugasPanitia->catatan_panitia = $validated['catatan_panitia'] ?? null;
+    $tugasPanitia->save();
+
+    return redirect()
+        ->route('panitia.qr', ['token' => $token])
+        ->with('success', 'Status tugas berhasil diperbarui.');
+}}
+
