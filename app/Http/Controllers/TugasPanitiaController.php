@@ -302,5 +302,31 @@ class TugasPanitiaController extends Controller
             'Perubahan status tidak dapat dilakukan melalui QR publik.'
         );
     }
-}
 
+    /**
+     * Halaman hasil scan QR panitia.
+     * Hanya menampilkan tugas milik panitia pemilik token (read-only).
+     */
+    public function publicPanitiaByToken(string $token)
+    {
+        $panitia = Panitia::where('qr_token', $token)->firstOrFail();
+
+        $tugas = TugasPanitia::whereHas('eventPanitia', function ($query) use ($panitia) {
+            $query->where('panitia_id', $panitia->id);
+        })
+            ->with(['eventPanitia.event', 'eventPanitia.divisi'])
+            ->orderBy('tanggal')
+            ->orderBy('jam_mulai')
+            ->get();
+
+        return view('panitia.tugas-qr', compact('panitia', 'tugas'));
+    }
+
+    /**
+     * Ubah status lewat QR sengaja ditutup.
+     * Perubahan status hanya lewat login panitia.
+     */
+    public function publicUpdateStatusByQr(string $token, TugasPanitia $tugasPanitia)
+    {
+        abort(403, 'Perubahan status tidak dapat dilakukan melalui QR.');
+    }}
